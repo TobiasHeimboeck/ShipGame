@@ -6,23 +6,20 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 @Entity
-public class Player {
+public class Game {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
     @GenericGenerator(name = "native", strategy = "native")
     private long id;
+    private String creationDate;
 
-    private String userName;
-
-    public Player() {
-
-    }
-
-    public Player(String userName) {
-        this.userName = userName;
+    public Game() {
+        this.creationDate = new SimpleDateFormat("dd/MM/yyyy").format(new Date());
     }
 
     public long getId() {
@@ -33,11 +30,11 @@ public class Player {
         this.id = id;
     }
 
-    public String getUserName() {
-        return this.userName;
+    public String getCreationDate() {
+        return this.creationDate;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setCreationDate(String creationDate) {
+        this.creationDate = creationDate;
     }
 }
