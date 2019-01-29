@@ -22,6 +22,7 @@ public class SalvoApplication {
             playerRepository.save(new Player("tobiasheimboeck@outlook.com"));
             playerRepository.save(new Player("test@mail.com"));
             gameRepository.save(new Game());
+            gameRepository.save(new Game());
         };
     }
 }
