@@ -3,8 +3,6 @@ package com.codeoftheweb.salvo.models;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 @Entity
 public class GamePlayer {
@@ -16,51 +14,33 @@ public class GamePlayer {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "player_id")
-    private long playerID;
+    private Player player;
 
-    private long gameID;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "game_id")
+    private Game game;
 
-    private String joinDate;
-
-    public GamePlayer() {
-
-    }
-
-    public GamePlayer(Player player, Game game) {
-        this.playerID = player.getId();
-        this.gameID = game.getId();
-        this.joinDate = new SimpleDateFormat("dd/MM/yyyy").format(new Date());
+    public GamePlayer(Player player) {
+        this.player = player;
     }
 
     public long getId() {
-        return this.id;
+        return id;
     }
 
-    public void setId(long id) {
-        this.id = id;
+    public Player getPlayer() {
+        return player;
     }
 
-    public long getPlayerID() {
-        return this.playerID;
+    public void setPlayer(Player player) {
+        this.player = player;
     }
 
-    public void setPlayerID(long playerID) {
-        this.playerID = playerID;
+    public Game getGame() {
+        return game;
     }
 
-    public long getGameID() {
-        return this.gameID;
-    }
-
-    public void setGameID(long gameID) {
-        this.gameID = gameID;
-    }
-
-    public String getJoinDate() {
-        return joinDate;
-    }
-
-    public void setJoinDate(String joinDate) {
-        this.joinDate = joinDate;
+    public void setGame(Game game) {
+        this.game = game;
     }
 }
