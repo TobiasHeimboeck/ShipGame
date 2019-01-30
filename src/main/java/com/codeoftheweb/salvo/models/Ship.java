@@ -1,6 +1,7 @@
 package com.codeoftheweb.salvo.models;
 
 import org.hibernate.annotations.GenericGenerator;
+
 import javax.persistence.*;
 
 public class Ship {
