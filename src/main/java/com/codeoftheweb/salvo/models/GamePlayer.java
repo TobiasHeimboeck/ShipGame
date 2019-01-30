@@ -20,6 +20,10 @@ public class GamePlayer {
     @JoinColumn(name = "game_id")
     private Game game;
 
+    public GamePlayer() {
+
+    }
+
     public GamePlayer(Player player) {
         this.player = player;
     }
