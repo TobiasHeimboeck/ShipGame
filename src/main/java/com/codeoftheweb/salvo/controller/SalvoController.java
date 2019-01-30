@@ -8,20 +8,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping(value = "/api")
 public class SalvoController {
 
     @Autowired
     private GameRepository repository;
 
     @RequestMapping(value = "/games")
-    public List<Object> getAllGames() {
+    public List<Object> getAllGames() throws IOException {
         return repository.findAll().stream().map(this::getGameDTO)
                 .collect(Collectors.toList());
     }
