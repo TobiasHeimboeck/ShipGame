@@ -4,6 +4,7 @@ import com.codeoftheweb.salvo.models.Game;
 import com.codeoftheweb.salvo.models.GamePlayer;
 import com.codeoftheweb.salvo.models.Player;
 import com.codeoftheweb.salvo.models.Ship;
+import com.codeoftheweb.salvo.repository.GamePlayerRepository;
 import com.codeoftheweb.salvo.repository.GameRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,7 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 @RestController
 @RequestMapping(value = "/api")
@@ -22,15 +24,22 @@ public class SalvoController {
     @Autowired
     private GameRepository repository;
 
+    @Autowired
+    private GamePlayerRepository gamePlayerRepository;
+
     @RequestMapping(value = "/games")
     public List<Object> getAllGames() {
         return repository.findAll().stream().map(this::getGameDTO)
-                .collect(Collectors.toList());
+                .collect(toList());
     }
 
     @RequestMapping(value = "/game_view/{id}")
     public Map<String, Object> getGame(@PathVariable long id) {
-        return getGameDTO(repository.getOne(id));
+        GamePlayer gamePlayer = gamePlayerRepository.getOne(id);
+        Map<String, Object> gameView = new HashMap<>();
+        gameView.put("games", getGameDTO(gamePlayer.getGame()));
+        gameView.put("ships", gamePlayer.getShips().stream().map(this::getShipDTO).collect(toList()));
+        return gameView;
     }
 
     private Map<String, Object> getGameDTO(Game game) {
@@ -38,19 +47,14 @@ public class SalvoController {
         dto.put("id", game.getId());
         dto.put("created", game.getCreationDate());
         dto.put("gamePlayers", game.getGamePlayers().stream().map(this::getGamePlayerDTO)
-                .collect(Collectors.toList()));
-        dto.put("ships", game.getGamePlayers().stream().map(this::getShipDTO).collect(Collectors.toList()));
+                .collect(toList()));
         return dto;
     }
 
-    private Map<String, Object> getShipDTO(GamePlayer player) {
+    private Map<String, Object> getShipDTO(Ship ship) {
         final Map<String, Object> dto = new HashMap<>();
-
-        for(Ship current : player.getShips()) {
-            dto.put("type", current.getType());
-            dto.put("locations", current.getLocations());
-        }
-
+        dto.put("type", ship.getType());
+        dto.put("locations", ship.getLocations());
         return dto;
     }
 
@@ -66,5 +70,21 @@ public class SalvoController {
         dto.put("id", player.getId());
         dto.put("email", player.getUserName());
         return dto;
+    }
+
+    public GameRepository getRepository() {
+        return repository;
+    }
+
+    public void setRepository(GameRepository repository) {
+        this.repository = repository;
+    }
+
+    public GamePlayerRepository getGamePlayerRepository() {
+        return gamePlayerRepository;
+    }
+
+    public void setGamePlayerRepository(GamePlayerRepository gamePlayerRepository) {
+        this.gamePlayerRepository = gamePlayerRepository;
     }
 }

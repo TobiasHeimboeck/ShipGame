@@ -49,8 +49,13 @@ public class SalvoApplication {
             gamePlayerRepository.save(gamePlayer1);
             gamePlayerRepository.save(gamePlayer2);
 
-            Ship ship = new Ship("cruisor", gamePlayer, Arrays.asList("H1", "H2", "H3"));
+            Ship ship = new Ship("cruiser", gamePlayer, Arrays.asList("H1", "H2", "H3"));
+            Ship ship1 = new Ship("battleship", gamePlayer1, Arrays.asList("H1", "H2", "H3"));
+            Ship ship2 = new Ship("battleship", gamePlayer2, Arrays.asList("H1", "H2", "H3"));
+
             shipRepository.save(ship);
+            shipRepository.save(ship1);
+            shipRepository.save(ship2);
         };
     }
 }
