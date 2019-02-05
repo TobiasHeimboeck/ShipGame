@@ -2,7 +2,10 @@ const main = new Vue({
     el: "#main",
     data: {
         pageNumber: {},
-        gameData: {}
+        gameData: {},
+        columns: ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"],
+        rows: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"],
+        currentUsers: undefined
     },
     created() {
         this.loadPage("gp");
@@ -20,7 +23,15 @@ const main = new Vue({
 
                 data = json;
                 this.gameData = data;
-                console.log(this.gameData);
+
+                var emails = [];
+                for(let i = 0; i < this.gameData.games.gamePlayers.length; i++)
+                    emails.push(this.gameData.games.gamePlayers[i].player.email);
+
+                if(emails.length > 0)
+                    this.currentUsers = emails[0] + " vs " + emails[1];
+
+                document.getElementById("gameInfo").innerHTML = this.currentUsers;
 
             }).catch(function (error) {
                 console.log(error);

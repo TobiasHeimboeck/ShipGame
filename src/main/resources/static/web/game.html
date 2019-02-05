@@ -6,7 +6,18 @@
     <body>
         
         <div id="main">
-        
+
+            <h5 id="gameInfo"></h5>
+
+            <table>
+                <tr>
+                    <th v-for="row in rows"> {{ row }} </th>
+                </tr>
+                <tr>
+                    <td v-for="column in columns"> {{ column }}</td>
+                </tr>
+            </table>
+
         </div>
         
         <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>

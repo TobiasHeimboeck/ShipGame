@@ -24,16 +24,22 @@ public class SalvoApplication {
 
     @Bean
     public CommandLineRunner initData(PlayerRepository playerRepository, GameRepository gameRepository,
-                                      GamePlayerRepository gamePlayerRepository, ShipRepository shipRepository) {
+                                      GamePlayerRepository gamePlayerRepository,
+                                      ShipRepository shipRepository) {
         return (args) -> {
             Player player = new Player("tobiasheimboeck@outlook.com");
             GamePlayer gamePlayer = new GamePlayer(player);
+            Player player3 = new Player("test@game.com");
+            GamePlayer gamePlayer4 = new GamePlayer(player3);
             Game game = new Game();
             game.addGamePlayer(gamePlayer);
+            game.addGamePlayer(gamePlayer4);
 
             playerRepository.save(player);
+            playerRepository.save(player3);
             gameRepository.save(game);
             gamePlayerRepository.save(gamePlayer);
+            gamePlayerRepository.save(gamePlayer4);
 
             Player player1 = new Player("test@mail.com");
             Player player2 = new Player("test@test.com");
@@ -56,6 +62,7 @@ public class SalvoApplication {
             shipRepository.save(ship);
             shipRepository.save(ship1);
             shipRepository.save(ship2);
+
         };
     }
 }
