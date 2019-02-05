@@ -3,8 +3,8 @@ const main = new Vue({
     data: {
         pageNumber: {},
         gameData: {},
-        columns: ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"],
-        rows: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"],
+        rows: ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"],
+        columns: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"],
         currentUsers: undefined
     },
     created() {
