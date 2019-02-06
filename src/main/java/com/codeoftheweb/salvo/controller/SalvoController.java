@@ -71,7 +71,7 @@ public class SalvoController {
         dto.put("email", player.getUserName());
         return dto;
     }
-
+    
     public GameRepository getRepository() {
         return repository;
     }

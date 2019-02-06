@@ -16,7 +16,7 @@ public class Game {
     private String creationDate;
 
     @OneToMany(mappedBy = "game", fetch = FetchType.EAGER)
-    private Set<GamePlayer> gamePlayers;
+    private final Set<GamePlayer> gamePlayers;
 
     public Game() {
         this.creationDate = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date());

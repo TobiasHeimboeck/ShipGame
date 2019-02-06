@@ -25,17 +25,33 @@ const main = new Vue({
                 this.gameData = data;
 
                 var emails = [];
-                for(let i = 0; i < this.gameData.games.gamePlayers.length; i++)
-                    emails.push(this.gameData.games.gamePlayers[i].player.email);
+                for (let i = 0; i < this.gameData.games.gamePlayers.length; i++) {
+                    let current = this.gameData.games.gamePlayers[i].player;
+                    if (main.getParameterByName("gp").toString() === current.id.toString()) {
+                        emails.push(current.email + " (you) ");
+                    } else {
+                        emails.push(current.email);
+                    }
+                }
 
-                if(emails.length > 0)
+                if (emails.length > 0)
                     this.currentUsers = emails[0] + " vs " + emails[1];
 
                 document.getElementById("gameInfo").innerHTML = this.currentUsers;
+                
+                for(let a = 0; a < this.gameData.ships.length; a++) {
+                    for(let b = 0; b < this.gameData.ships[a].locations.length; b++) {
+                        let currentLoc = this.gameData.ships[a].locations[b];
+                        document.getElementById(currentLoc).style.backgroundColor = "cyan";
+                    }
+                }
 
             }).catch(function (error) {
                 console.log(error);
             })
+        },
+        getShips() {
+            console.log(this.gameData.ships);
         },
         getParameterByName(name, url) {
             if (!url) url = window.location.href;
@@ -47,6 +63,7 @@ const main = new Vue({
             return decodeURIComponent(results[2].replace(/\+/g, ' '));
         },
         loadPage(search) {
+
             var reg = /(?:[?&]([^?&#=]+)(?:=([^&#]*))?)(?:#.*)?/g;
 
             search.replace(reg, function (match, param, val) {
