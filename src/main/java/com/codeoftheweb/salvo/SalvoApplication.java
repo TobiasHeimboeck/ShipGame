@@ -1,19 +1,14 @@
 package com.codeoftheweb.salvo;
 
-import com.codeoftheweb.salvo.models.Game;
-import com.codeoftheweb.salvo.models.GamePlayer;
-import com.codeoftheweb.salvo.models.Player;
-import com.codeoftheweb.salvo.models.Ship;
-import com.codeoftheweb.salvo.repository.GamePlayerRepository;
-import com.codeoftheweb.salvo.repository.GameRepository;
-import com.codeoftheweb.salvo.repository.PlayerRepository;
-import com.codeoftheweb.salvo.repository.ShipRepository;
+import com.codeoftheweb.salvo.models.*;
+import com.codeoftheweb.salvo.repository.*;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 @SpringBootApplication
 public class SalvoApplication {
@@ -25,44 +20,43 @@ public class SalvoApplication {
     @Bean
     public CommandLineRunner initData(PlayerRepository playerRepository, GameRepository gameRepository,
                                       GamePlayerRepository gamePlayerRepository,
-                                      ShipRepository shipRepository) {
+                                      ShipRepository shipRepository, SalvoRepository salvoRepository) {
         return (args) -> {
             Player player = new Player("tobiasheimboeck@outlook.com");
             GamePlayer gamePlayer = new GamePlayer(player);
-            Player player3 = new Player("test@game.com");
-            GamePlayer gamePlayer4 = new GamePlayer(player3);
-            Game game = new Game();
-            game.addGamePlayer(gamePlayer);
-            game.addGamePlayer(gamePlayer4);
-
-            playerRepository.save(player);
-            playerRepository.save(player3);
-            gameRepository.save(game);
-            gamePlayerRepository.save(gamePlayer);
-            gamePlayerRepository.save(gamePlayer4);
+            Ship ship = new Ship("battleship", gamePlayer, Arrays.asList("A1", "A2", "A3"));
+            Salvo salvo = new Salvo(gamePlayer, 1, Arrays.asList("C4", "C5"));
 
             Player player1 = new Player("test@mail.com");
-            Player player2 = new Player("test@test.com");
             GamePlayer gamePlayer1 = new GamePlayer(player1);
+            Ship ship1 = new Ship("battleship", gamePlayer1, Arrays.asList("C2", "C3", "C4"));
+            Salvo salvo1 = new Salvo(gamePlayer1, 1, Collections.singletonList("C3"));
+
+            Player player2 = new Player("gameplayer@mail.com");
             GamePlayer gamePlayer2 = new GamePlayer(player2);
-            Game game1 = new Game();
-            game1.addGamePlayer(gamePlayer1);
-            game1.addGamePlayer(gamePlayer2);
+            Ship ship2 = new Ship("battleship", gamePlayer2, Arrays.asList("I6", "I7", "I8"));
+            Salvo salvo2 = new Salvo(gamePlayer2, 1, Collections.singletonList("I6"));
+
+            Game game = new Game();
+            game.addGamePlayer(gamePlayer);
+            game.addGamePlayer(gamePlayer1);
+            game.addGamePlayer(gamePlayer2);
+
+            playerRepository.save(player);
+            gameRepository.save(game);
+            gamePlayerRepository.save(gamePlayer);
+            shipRepository.save(ship);
+            salvoRepository.save(salvo);
+
+            playerRepository.save(player2);
+            gamePlayerRepository.save(gamePlayer2);
+            shipRepository.save(ship2);
+            salvoRepository.save(salvo2);
 
             playerRepository.save(player1);
-            playerRepository.save(player2);
-            gameRepository.save(game1);
             gamePlayerRepository.save(gamePlayer1);
-            gamePlayerRepository.save(gamePlayer2);
-
-            Ship ship = new Ship("cruiser", gamePlayer, Arrays.asList("H1", "H2", "H3", "B4", "C5", "D6", "G8", "H8", "I8", "J3", "J4"));
-            Ship ship1 = new Ship("battleship", gamePlayer1, Arrays.asList("H1", "H2", "H3"));
-            Ship ship2 = new Ship("battleship", gamePlayer2, Arrays.asList("H1", "H2", "H3"));
-
-            shipRepository.save(ship);
             shipRepository.save(ship1);
-            shipRepository.save(ship2);
-
+            salvoRepository.save(salvo1);
         };
     }
 }

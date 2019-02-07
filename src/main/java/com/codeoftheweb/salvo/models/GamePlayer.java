@@ -3,8 +3,7 @@ package com.codeoftheweb.salvo.models;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 public class GamePlayer {
@@ -25,6 +24,9 @@ public class GamePlayer {
     @OneToMany(mappedBy = "gamePlayer", fetch = FetchType.EAGER)
     private Set<Ship> ships;
 
+    @OneToMany(mappedBy = "gamePlayer", fetch = FetchType.EAGER)
+    private List<Salvo> salvos;
+
     public GamePlayer() {
 
     }
@@ -32,6 +34,7 @@ public class GamePlayer {
     public GamePlayer(Player player) {
         this.player = player;
         this.ships = new HashSet<>();
+        this.salvos = new ArrayList<>();
     }
 
     public void addShip(Ship ship) {
@@ -41,6 +44,10 @@ public class GamePlayer {
 
     public long getId() {
         return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public Player getPlayer() {
@@ -61,5 +68,17 @@ public class GamePlayer {
 
     public Set<Ship> getShips() {
         return ships;
+    }
+
+    public void setShips(Set<Ship> ships) {
+        this.ships = ships;
+    }
+
+    public List<Salvo> getSalvos() {
+        return salvos;
+    }
+
+    public void setSalvos(List<Salvo> salvos) {
+        this.salvos = salvos;
     }
 }

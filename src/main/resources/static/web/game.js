@@ -42,7 +42,16 @@ const main = new Vue({
                 for(let a = 0; a < this.gameData.ships.length; a++) {
                     for(let b = 0; b < this.gameData.ships[a].locations.length; b++) {
                         let currentLoc = this.gameData.ships[a].locations[b];
-                        document.getElementById(currentLoc).style.backgroundColor = "cyan";
+                        document.getElementById("P" + currentLoc).style.backgroundColor = "cyan";
+                    }
+                }
+
+                for(let c = 0; c < this.gameData.salvoes.length; c++) {
+                    for(let d = 0; d < this.gameData.salvoes[c].locations.length; d++) {
+                        let currentSalvo = this.gameData.salvoes[c];
+                        console.log(currentSalvo.locations[d]);
+                        document.getElementById("E" + currentSalvo.locations[d]).style.backgroundColor = "orange";
+                        document.getElementById("E" + currentSalvo.locations[d]).innerHTML = currentSalvo.turn;
                     }
                 }
 

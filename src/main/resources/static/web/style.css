@@ -1,14 +1,37 @@
 body {
     font-family: sans-serif;
+    margin-left: 50px;
+    margin-right: 50px;
+    text-align: center;
+    background-image: url(https://i.pinimg.com/originals/39/95/25/399525b396ccd329aa8ef946274cf277.jpg);
+    background-attachment: fixed;
+    background-size: cover;
+    color: white;
 }
 
 table {
     border-collapse: collapse;
+    width: 40%;
+    margin-bottom: -800px;
 }
 
 td {
     height: 50px;
     width: 50px;
     border-style: solid;
-    border-width: thin;
+    border-color: darkgray;
+    border-width: medium;
+}
+
+#enemy {
+    float: right;
+}
+
+#gameInfo {
+    background-color: darkcyan;
+    width: 40%;
+    height: 30px;
+    margin-left: 30%;
+    border-radius: 10px;
+    padding-top: 15px;
 }

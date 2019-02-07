@@ -1,9 +1,6 @@
 package com.codeoftheweb.salvo.controller;
 
-import com.codeoftheweb.salvo.models.Game;
-import com.codeoftheweb.salvo.models.GamePlayer;
-import com.codeoftheweb.salvo.models.Player;
-import com.codeoftheweb.salvo.models.Ship;
+import com.codeoftheweb.salvo.models.*;
 import com.codeoftheweb.salvo.repository.GamePlayerRepository;
 import com.codeoftheweb.salvo.repository.GameRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +36,15 @@ public class SalvoController {
         Map<String, Object> gameView = new HashMap<>();
         gameView.put("games", getGameDTO(gamePlayer.getGame()));
         gameView.put("ships", gamePlayer.getShips().stream().map(this::getShipDTO).collect(toList()));
+        gameView.put("salvoes", gamePlayer.getSalvos().stream().map(this::getSalvoesDTO).collect(toList()));
+        return gameView;
+    }
+
+    private Map<String, Object> getSalvoesDTO(Salvo salvo) {
+        final Map<String, Object> gameView = new HashMap<>();
+        gameView.put("turn", salvo.getTurn());
+        gameView.put("player", salvo.getPlayer().getId());
+        gameView.put("locations", salvo.getLocations());
         return gameView;
     }
 
