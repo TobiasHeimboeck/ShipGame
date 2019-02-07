@@ -20,16 +20,16 @@ public class Score {
     @JoinColumn(name = "game_id")
     private Game game;
 
-    private String creationDate;
+    private String finishedDate;
 
     public Score() {
 
     }
 
-    public Score(Player player, Game game, String creationDate) {
+    public Score(Player player, Game game, String finishedDate) {
         this.player = player;
         this.game = game;
-        this.creationDate = creationDate;
+        this.finishedDate = finishedDate;
     }
 
     public long getId() {
@@ -56,11 +56,11 @@ public class Score {
         this.game = game;
     }
 
-    public String getCreationDate() {
-        return creationDate;
+    public String getFinishedDate() {
+        return finishedDate;
     }
 
-    public void setCreationDate(String creationDate) {
-        this.creationDate = creationDate;
+    public void setFinishedDate(String finishedDate) {
+        this.finishedDate = finishedDate;
     }
 }

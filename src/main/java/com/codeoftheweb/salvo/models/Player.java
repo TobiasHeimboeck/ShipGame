@@ -32,6 +32,16 @@ public class Player {
         this.scores = new HashSet<>();
     }
 
+    public Score getScore(Game game) {
+        Score response = null;
+        for(Score current : game.getScores()) {
+            if(current.getGame().getId() == game.getId()) {
+                response = current;
+            }
+        }
+        return response;
+    }
+
     public void addGamePlayer(GamePlayer player) {
         player.setPlayer(this);
         this.gamePlayers.add(player);

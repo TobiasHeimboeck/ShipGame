@@ -42,6 +42,10 @@ public class GamePlayer {
         ships.add(ship);
     }
 
+    public Score getScore() {
+        return this.player.getScore(this.game);
+    }
+
     public long getId() {
         return id;
     }

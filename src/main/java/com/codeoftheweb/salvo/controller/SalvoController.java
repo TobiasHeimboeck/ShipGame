@@ -42,9 +42,11 @@ public class SalvoController {
     private void loadSalvos(Map<String, Object> gameView, Game game) {
         for (GamePlayer current : game.getGamePlayers()) {
             if (current.getId() == game.getId()) {
-                gameView.put("salvoes", current.getSalvos().stream().map(this::getSalvoesDTO).collect(toList()));
+                gameView.put("salvoes", current.getSalvos().stream().map(this::getSalvoesDTO)
+                        .collect(toList()));
             } else {
-                gameView.put("enemy_salvoes", current.getSalvos().stream().map(this::getSalvoesDTO).collect(toList()));
+                gameView.put("enemy_salvoes", current.getSalvos().stream().map(this::getSalvoesDTO)
+                        .collect(toList()));
             }
         }
     }
