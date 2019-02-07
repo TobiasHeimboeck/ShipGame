@@ -27,7 +27,9 @@ public class Score {
     }
 
     public Score(Player player, Game game, String creationDate) {
-
+        this.player = player;
+        this.game = game;
+        this.creationDate = creationDate;
     }
 
     public long getId() {
