@@ -18,9 +18,13 @@ public class Game {
     @OneToMany(mappedBy = "game", fetch = FetchType.EAGER)
     private final Set<GamePlayer> gamePlayers;
 
+    @OneToMany(mappedBy = "game", fetch = FetchType.EAGER)
+    private final Set<Score> scores;
+
     public Game() {
         this.creationDate = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date());
         this.gamePlayers = new HashSet<>();
+        this.scores = new HashSet<>();
     }
 
     public void addGamePlayer(GamePlayer player) {
@@ -46,5 +50,9 @@ public class Game {
 
     public void setCreationDate(String creationDate) {
         this.creationDate = creationDate;
+    }
+
+    public Set<Score> getScores() {
+        return scores;
     }
 }

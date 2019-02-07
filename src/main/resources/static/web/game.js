@@ -5,7 +5,8 @@ const main = new Vue({
         gameData: {},
         rows: ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"],
         columns: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"],
-        currentUsers: undefined
+        player: {},
+        enemy: {}
     },
     created() {
         this.loadPage("gp");
@@ -24,34 +25,51 @@ const main = new Vue({
                 data = json;
                 this.gameData = data;
 
-                var emails = [];
-                for (let i = 0; i < this.gameData.games.gamePlayers.length; i++) {
-                    let current = this.gameData.games.gamePlayers[i].player;
-                    if (main.getParameterByName("gp").toString() === current.id.toString()) {
-                        emails.push(current.email + " (you) ");
+                for (let x = 0; x < this.gameData.games.gamePlayers.length; x++) {
+                    let currentPlayer = this.gameData.games.gamePlayers[x].player;
+                    if (main.getParameterByName("gp").toString() === currentPlayer.id.toString()) {
+                        this.player = currentPlayer;
                     } else {
-                        emails.push(current.email);
+                        this.enemy = currentPlayer;
                     }
                 }
 
-                if (emails.length > 0)
-                    this.currentUsers = emails[0] + " vs " + emails[1];
+                document.getElementById("gameInfo").innerHTML = this.player.email + "(you) vs " + this.enemy.email;
 
-                document.getElementById("gameInfo").innerHTML = this.currentUsers;
-                
-                for(let a = 0; a < this.gameData.ships.length; a++) {
-                    for(let b = 0; b < this.gameData.ships[a].locations.length; b++) {
+                console.log(this.player.email + " (you) vs " + this.enemy.email);
+
+                for (let a = 0; a < this.gameData.ships.length; a++) {
+                    for (let b = 0; b < this.gameData.ships[a].locations.length; b++) {
                         let currentLoc = this.gameData.ships[a].locations[b];
                         document.getElementById("P" + currentLoc).style.backgroundColor = "cyan";
                     }
                 }
 
-                for(let c = 0; c < this.gameData.salvoes.length; c++) {
-                    for(let d = 0; d < this.gameData.salvoes[c].locations.length; d++) {
+                for (let c = 0; c < this.gameData.salvoes.length; c++) {
+                    for (let d = 0; d < this.gameData.salvoes[c].locations.length; d++) {
                         let currentSalvo = this.gameData.salvoes[c];
-                        console.log(currentSalvo.locations[d]);
                         document.getElementById("E" + currentSalvo.locations[d]).style.backgroundColor = "orange";
                         document.getElementById("E" + currentSalvo.locations[d]).innerHTML = currentSalvo.turn;
+                    }
+                }
+
+                for (let e = 0; e < this.gameData.enemy_salvoes.length; e++) {
+                    for (let f = 0; f < this.gameData.enemy_salvoes[e].locations.length; f++) {
+
+                        let currentEnemySalvo = this.gameData.enemy_salvoes[e];
+
+                        console.log(currentEnemySalvo.locations[f]);
+
+                        for (let a = 0; a < this.gameData.ships.length; a++) {
+                            for (let b = 0; b < this.gameData.ships[a].locations.length; b++) {
+                                let currentLoc = this.gameData.ships[a].locations[b];
+
+                                if (currentEnemySalvo.locations[f] == currentLoc) {
+                                    document.getElementById("P" + currentEnemySalvo.locations[f]).style.backgroundColor = "red";
+                                    document.getElementById("P" + currentEnemySalvo.locations[f]).innerHTML = currentEnemySalvo.turn;
+                                }
+                            }
+                        }
                     }
                 }
 
@@ -59,8 +77,13 @@ const main = new Vue({
                 console.log(error);
             })
         },
-        getShips() {
-            console.log(this.gameData.ships);
+        getShipLocations() {
+            for (let a = 0; a < this.gameData.ships.length; a++) {
+                for (let b = 0; b < this.gameData.ships[a].locations.length; b++) {
+                    let currentLoc = this.gameData.ships[a].locations[b];
+                    document.getElementById("P" + currentLoc).style.backgroundColor = "cyan";
+                }
+            }
         },
         getParameterByName(name, url) {
             if (!url) url = window.location.href;

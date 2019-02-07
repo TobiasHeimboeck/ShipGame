@@ -26,8 +26,7 @@ public class SalvoController {
 
     @RequestMapping(value = "/games")
     public List<Object> getAllGames() {
-        return repository.findAll().stream().map(this::getGameDTO)
-                .collect(toList());
+        return repository.findAll().stream().map(this::getGameDTO).collect(toList());
     }
 
     @RequestMapping(value = "/game_view/{id}")
@@ -36,8 +35,18 @@ public class SalvoController {
         Map<String, Object> gameView = new HashMap<>();
         gameView.put("games", getGameDTO(gamePlayer.getGame()));
         gameView.put("ships", gamePlayer.getShips().stream().map(this::getShipDTO).collect(toList()));
-        gameView.put("salvoes", gamePlayer.getSalvos().stream().map(this::getSalvoesDTO).collect(toList()));
+        loadSalvos(gameView, gamePlayer.getGame());
         return gameView;
+    }
+
+    private void loadSalvos(Map<String, Object> gameView, Game game) {
+        for (GamePlayer current : game.getGamePlayers()) {
+            if (current.getId() == game.getId()) {
+                gameView.put("salvoes", current.getSalvos().stream().map(this::getSalvoesDTO).collect(toList()));
+            } else {
+                gameView.put("enemy_salvoes", current.getSalvos().stream().map(this::getSalvoesDTO).collect(toList()));
+            }
+        }
     }
 
     private Map<String, Object> getSalvoesDTO(Salvo salvo) {
@@ -77,7 +86,7 @@ public class SalvoController {
         dto.put("email", player.getUserName());
         return dto;
     }
-    
+
     public GameRepository getRepository() {
         return repository;
     }
