@@ -39,6 +39,15 @@ public class SalvoController {
         return gameView;
     }
 
+    private Map<String, Object> getScoreDTO(Score score) {
+        final Map<String, Object> dto = new HashMap<>();
+        dto.put("id", score.getId());
+        dto.put("player", getPlayerDTO(score.getPlayer()));
+        dto.put("score", score.getGame());
+        dto.put("finished_date", score.getFinishedDate());
+        return dto;
+    }
+
     private void loadSalvos(Map<String, Object> gameView, Game game) {
         for (GamePlayer current : game.getGamePlayers()) {
             if (current.getId() == game.getId()) {
