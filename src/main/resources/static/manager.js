@@ -21,6 +21,8 @@ $(function() {
     }
   }
 
+  var postProcess = postPlayer(user);
+
   function postPlayer(userName) {
     $.post({
       headers: {
@@ -43,3 +45,17 @@ $(function() {
 
   loadData();
 });
+
+function get(valueArray)
+{
+
+    let response = [];
+
+    for (value in valueArray)
+    {
+        response = valueArray[value];
+    }
+
+
+
+}

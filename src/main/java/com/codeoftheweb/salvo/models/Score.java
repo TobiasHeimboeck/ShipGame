@@ -20,15 +20,18 @@ public class Score {
     @JoinColumn(name = "game_id")
     private Game game;
 
+    private double score;
+
     private String finishedDate;
 
     public Score() {
 
     }
 
-    public Score(Player player, Game game, String finishedDate) {
+    public Score(Player player, Game game, double score, String finishedDate) {
         this.player = player;
         this.game = game;
+        this.score = score;
         this.finishedDate = finishedDate;
     }
 
@@ -54,6 +57,14 @@ public class Score {
 
     public void setGame(Game game) {
         this.game = game;
+    }
+
+    public double getScore() {
+        return score;
+    }
+
+    public void setScore(double score) {
+        this.score = score;
     }
 
     public String getFinishedDate() {

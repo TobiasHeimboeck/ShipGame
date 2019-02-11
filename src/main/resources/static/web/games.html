@@ -4,20 +4,32 @@
 <head>
     <meta charset="UTF-8">
     <title>Salvo</title>
+    <link rel="stylesheet" href="gamestyle.css">
 </head>
 
 <body>
 
     <div id="main">
-        <ol>
-            <li v-for="(game, index) in this.jsonData">
-                {{ game.created }} {{ game.gamePlayers[index].player.email }}
-            </li>
-        </ol>
+
+        <table>
+            <tr>
+                <th>Total</th>
+                <th>Won</th>
+                <th>Lost</th>
+                <th>Tied</th>
+            </tr>
+            <tr v-for="game in gameData">
+                <td> {{ game.total }} </td>
+                <td> {{ game.wins }} </td>
+                <td> {{ game.losses }} </td>
+                <td> {{ game.ties }} </td>
+            </tr>
+        </table>
+
     </div>
     
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-    <script src="games.js"></script>
+    <script src="leaderboard.js"></script>
 </body>
 
 </html>

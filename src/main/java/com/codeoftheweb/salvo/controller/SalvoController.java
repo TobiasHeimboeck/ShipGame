@@ -3,14 +3,13 @@ package com.codeoftheweb.salvo.controller;
 import com.codeoftheweb.salvo.models.*;
 import com.codeoftheweb.salvo.repository.GamePlayerRepository;
 import com.codeoftheweb.salvo.repository.GameRepository;
+import com.codeoftheweb.salvo.repository.PlayerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static java.util.stream.Collectors.toList;
 
@@ -23,6 +22,9 @@ public class SalvoController {
 
     @Autowired
     private GamePlayerRepository gamePlayerRepository;
+
+    @Autowired
+    private PlayerRepository playerRepository;
 
     @RequestMapping(value = "/games")
     public List<Object> getAllGames() {
@@ -39,12 +41,18 @@ public class SalvoController {
         return gameView;
     }
 
-    private Map<String, Object> getScoreDTO(Score score) {
+    @RequestMapping(value = "/scoreboard")
+    public List<Object> getPlayers() {
+        return playerRepository.findAll().stream().map(this::getScoreDTO).collect(toList());
+    }
+
+    private Map<String, Object> getScoreDTO(Player player) {
         final Map<String, Object> dto = new HashMap<>();
-        dto.put("id", score.getId());
-        dto.put("player", getPlayerDTO(score.getPlayer()));
-        dto.put("score", score.getGame());
-        dto.put("finished_date", score.getFinishedDate());
+        dto.put("player", player.getUserName());
+        dto.put("total", player.getScores().stream().mapToDouble(Score::getScore).sum());
+        dto.put("wins", player.getScores().stream().filter(score -> score.getScore() == 1.0).count());
+        dto.put("losses", player.getScores().stream().filter(score -> score.getScore() == 0.0).count());
+        dto.put("ties", player.getScores().stream().filter(score -> score.getScore() == 0.5).count());
         return dto;
     }
 
@@ -99,7 +107,7 @@ public class SalvoController {
     }
 
     public GameRepository getRepository() {
-        return repository;
+        return this.repository;
     }
 
     public void setRepository(GameRepository repository) {
@@ -107,7 +115,7 @@ public class SalvoController {
     }
 
     public GamePlayerRepository getGamePlayerRepository() {
-        return gamePlayerRepository;
+        return this.gamePlayerRepository;
     }
 
     public void setGamePlayerRepository(GamePlayerRepository gamePlayerRepository) {

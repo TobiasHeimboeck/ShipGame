@@ -26,7 +26,7 @@ public class SalvoApplication {
                                       ScoreRepository scoreRepository) {
         return (args) -> {
 
-            Player player = new Player("tobiasheimboeck@outlook.com");
+            Player player = new Player("tobiasheimboeck@outlook.com", "gregbsej");
             GamePlayer gamePlayer = new GamePlayer(player);
             Ship ship = new Ship("battleship", gamePlayer, Arrays.asList("A1", "A2", "A3"));
             Salvo salvo = new Salvo(gamePlayer, 1, Arrays.asList("C4", "C5"));
@@ -34,12 +34,12 @@ public class SalvoApplication {
             Salvo test = new Salvo(gamePlayer, 2, Collections.singletonList("G6"));
             Salvo test1 = new Salvo(gamePlayer, 3, Arrays.asList("I2", "I3", "I4"));
 
-            Player player1 = new Player("test@mail.com");
+            Player player1 = new Player("test@mail.com", "ehgueuf");
             GamePlayer gamePlayer1 = new GamePlayer(player1);
             Ship ship1 = new Ship("battleship", gamePlayer1, Arrays.asList("C2", "C3", "C4"));
             Salvo salvo1 = new Salvo(gamePlayer1, 1, Collections.singletonList("C3"));
 
-            Player player2 = new Player("gameplayer@mail.com");
+            Player player2 = new Player("gameplayer@mail.com", "testpw");
             GamePlayer gamePlayer2 = new GamePlayer(player2);
             Ship ship2 = new Ship("battleship", gamePlayer2, Arrays.asList("I6", "I7", "I8"));
             Salvo salvo2 = new Salvo(gamePlayer2, 1, Collections.singletonList("A1"));
@@ -49,7 +49,7 @@ public class SalvoApplication {
             game.addGamePlayer(gamePlayer1);
             game.addGamePlayer(gamePlayer2);
 
-            Score score = new Score(player, game, new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date()));
+            Score score = new Score(player, game, 1.0, new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date()));
 
             playerRepository.save(player);
             gameRepository.save(game);

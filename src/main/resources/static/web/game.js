@@ -25,6 +25,8 @@ const main = new Vue({
                 data = json;
                 this.gameData = data;
 
+                console.log("> " + window.location.pathname);
+
                 for (let x = 0; x < this.gameData.games.gamePlayers.length; x++) {
                     let currentPlayer = this.gameData.games.gamePlayers[x].player;
                     if (main.getParameterByName("gp").toString() === currentPlayer.id.toString()) {
