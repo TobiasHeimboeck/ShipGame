@@ -39,15 +39,9 @@ public class SalvoApplication {
             Ship ship1 = new Ship("battleship", gamePlayer1, Arrays.asList("C2", "C3", "C4"));
             Salvo salvo1 = new Salvo(gamePlayer1, 1, Collections.singletonList("C3"));
 
-            Player player2 = new Player("gameplayer@mail.com", "testpw");
-            GamePlayer gamePlayer2 = new GamePlayer(player2);
-            Ship ship2 = new Ship("battleship", gamePlayer2, Arrays.asList("I6", "I7", "I8"));
-            Salvo salvo2 = new Salvo(gamePlayer2, 1, Collections.singletonList("A1"));
-
             Game game = new Game();
             game.addGamePlayer(gamePlayer);
             game.addGamePlayer(gamePlayer1);
-            game.addGamePlayer(gamePlayer2);
 
             Score score = new Score(player, game, 1.0, new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date()));
 
@@ -57,10 +51,6 @@ public class SalvoApplication {
             shipRepository.save(ship);
             salvoRepository.save(salvo);
             scoreRepository.save(score);
-            playerRepository.save(player2);
-            gamePlayerRepository.save(gamePlayer2);
-            shipRepository.save(ship2);
-            salvoRepository.save(salvo2);
             playerRepository.save(player1);
             gamePlayerRepository.save(gamePlayer1);
             shipRepository.save(ship1);

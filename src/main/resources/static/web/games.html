@@ -11,14 +11,24 @@
 
     <div id="main">
 
-        <table>
+        <table id="games">
             <tr>
+                <th>Created</th>
+                <th>id</th>
+                <th>Game Players</th>
+            </tr>
+        </table>
+
+        <table id="scores">
+            <tr>
+                <th>Name</th>
                 <th>Total</th>
                 <th>Won</th>
                 <th>Lost</th>
                 <th>Tied</th>
             </tr>
             <tr v-for="game in gameData">
+                <td> {{ game.player }} </td>
                 <td> {{ game.total }} </td>
                 <td> {{ game.wins }} </td>
                 <td> {{ game.losses }} </td>

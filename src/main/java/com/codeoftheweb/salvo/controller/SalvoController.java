@@ -9,7 +9,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static java.util.stream.Collectors.toList;
 
@@ -23,12 +25,16 @@ public class SalvoController {
     @Autowired
     private GamePlayerRepository gamePlayerRepository;
 
-    @Autowired
     private PlayerRepository playerRepository;
 
     @RequestMapping(value = "/games")
     public List<Object> getAllGames() {
-        return repository.findAll().stream().map(this::getGameDTO).collect(toList());
+        return this.repository.findAll().stream().map(this::getGameDTO).collect(toList());
+    }
+
+    @RequestMapping(value = "/scoreboard")
+    public List<Object> getPlayers() {
+        return playerRepository.findAll().stream().map(this::getScoreDTO).collect(toList());
     }
 
     @RequestMapping(value = "/game_view/{id}")
@@ -39,11 +45,6 @@ public class SalvoController {
         gameView.put("ships", gamePlayer.getShips().stream().map(this::getShipDTO).collect(toList()));
         loadSalvos(gameView, gamePlayer.getGame());
         return gameView;
-    }
-
-    @RequestMapping(value = "/scoreboard")
-    public List<Object> getPlayers() {
-        return playerRepository.findAll().stream().map(this::getScoreDTO).collect(toList());
     }
 
     private Map<String, Object> getScoreDTO(Player player) {
@@ -120,5 +121,13 @@ public class SalvoController {
 
     public void setGamePlayerRepository(GamePlayerRepository gamePlayerRepository) {
         this.gamePlayerRepository = gamePlayerRepository;
+    }
+
+    public PlayerRepository getPlayerRepository() {
+        return playerRepository;
+    }
+
+    public void setPlayerRepository(PlayerRepository playerRepository) {
+        this.playerRepository = playerRepository;
     }
 }
