@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
@@ -11,36 +11,41 @@
 
     <div id="main">
 
-        <form id="login-form">
-            <label>Name: <input type="text" name="username"></label>
-            <label>Password: <input type="text" name="password"></label>
-            <button @click="this.login">Login</button>
-        </form>
+        <div v-if="loggedIn">You are logged in.</div>
+        <div v-if="!loggedIn">You are logged out.</div>
 
-        <form id="logout-form">
-            <button>Log out</button>
-        </form>
+        <div>
+            <label>Name: <input id="username" type="text" name="username"></label>
+            <label>Password: <input id="password" type="text" name="password"></label>
+            <button @click="login">Sign in</button>
+            <button @click="signup">Sign up</button>
+            <button @click="logout">Sign out</button>
+        </div>
 
-        <ul v-for="game in games">
-            <li> {{ game.id }} {{ game.created }} {{ firstPlayer.player.email }} vs {{ secondPlayer.player.email }}</li>
-        </ul>
 
-        <table>
-            <tr>
-                <th>Name</th>
-                <th>Total</th>
-                <th>Won</th>
-                <th>Lost</th>
-                <th>Tied</th>
-            </tr>
-            <tr v-for="data in gameData">
-                <td> {{ data.player }} </td>
-                <td> {{ data.total }} </td>
-                <td> {{ data.wins }} </td>
-                <td> {{ data.losses }} </td>
-                <td> {{ data.ties }} </td>
-            </tr>
-        </table>
+        <div v-if="loggedIn">
+
+            <ul v-for="game in games">
+                <li> {{ game.id }} {{ game.created }} {{ firstPlayer.player.email }} vs {{ secondPlayer.player.email }}</li>
+            </ul>
+
+            <table>
+                <tr>
+                    <th>Name</th>
+                    <th>Total</th>
+                    <th>Won</th>
+                    <th>Lost</th>
+                    <th>Tied</th>
+                </tr>
+                <tr v-for="data in gameData">
+                    <td> {{ data.player }} </td>
+                    <td> {{ data.total }} </td>
+                    <td> {{ data.wins }} </td>
+                    <td> {{ data.losses }} </td>
+                    <td> {{ data.ties }} </td>
+                </tr>
+            </table>
+        </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>

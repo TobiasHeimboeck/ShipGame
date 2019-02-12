@@ -2,14 +2,20 @@ package com.codeoftheweb.salvo;
 
 import com.codeoftheweb.salvo.models.*;
 import com.codeoftheweb.salvo.repository.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.authentication.configurers.GlobalAuthenticationConfigurerAdapter;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.WebAttributes;
 import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
 
@@ -67,40 +73,57 @@ public class SalvoApplication {
             salvoRepository.save(salvo1);
             salvoRepository.save(test);
             salvoRepository.save(test1);
-
         };
     }
+}
 
-    @EnableWebSecurity
-    @Configuration
-    class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
+@Configuration
+class WebSecurityConfiguration extends GlobalAuthenticationConfigurerAdapter {
 
-        private Object o;
+    @Autowired
+    private PlayerRepository playerRepository;
 
-        @Override
-        protected void configure(HttpSecurity http) throws Exception {
-            http.authorizeRequests()
-                    .antMatchers("/web/**").permitAll()
-                    .antMatchers("/api/login").permitAll()
-                    .antMatchers("/api/player").permitAll()
-                    .antMatchers("/api/games").permitAll()
-                    .antMatchers("/api/scoreboard").permitAll()
-                    .antMatchers("/favicon.ico").permitAll()
-                    .antMatchers("/rest/**").denyAll()
-                    .anyRequest().authenticated()
-                    .and()
-                    .formLogin()
-                    .usernameParameter("username")
-                    .passwordParameter("password")
-                    .loginPage("/api/login");
+    @Override
+    public void init(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(inputName -> {
+            Player person = playerRepository.findByUserName(inputName);
+            if (person != null) {
+                return new User(person.getUserName(), person.getPassword(),
+                        AuthorityUtils.createAuthorityList("USER"));
+            } else {
+                throw new UsernameNotFoundException("Unknown user: " + inputName);
+            }
+        });
+    }
+}
 
-            http.logout().logoutUrl("/api/logout");
-            http.csrf().disable();
-            http.exceptionHandling().authenticationEntryPoint((req, res, exc) -> res.sendError(HttpServletResponse.SC_UNAUTHORIZED));
-            http.formLogin().successHandler((req, res, auth) -> clearAuthenticationAttributes(req));
-            http.formLogin().failureHandler((req, res, exc) -> res.sendError(HttpServletResponse.SC_UNAUTHORIZED));
-            http.logout().logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler());
-        }
+@EnableWebSecurity
+@Configuration
+class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http.authorizeRequests()
+                .antMatchers("/web/**").permitAll()
+                .antMatchers("/api/login").permitAll()
+                .antMatchers("/api/players").permitAll()
+                .antMatchers("/api/games").permitAll()
+                .antMatchers("/api/scoreboard").permitAll()
+                .antMatchers("/favicon.ico").permitAll()
+                .antMatchers("/rest/**").denyAll()
+                .anyRequest().authenticated()
+                .and()
+                .formLogin()
+                .usernameParameter("username")
+                .passwordParameter("password")
+                .loginPage("/api/login");
+
+        http.logout().logoutUrl("/api/logout");
+        http.csrf().disable();
+        http.exceptionHandling().authenticationEntryPoint((req, res, exc) -> res.sendError(HttpServletResponse.SC_UNAUTHORIZED));
+        http.formLogin().successHandler((req, res, auth) -> clearAuthenticationAttributes(req));
+        http.formLogin().failureHandler((req, res, exc) -> res.sendError(HttpServletResponse.SC_UNAUTHORIZED));
+        http.logout().logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler());
     }
 
     private void clearAuthenticationAttributes(HttpServletRequest request) {

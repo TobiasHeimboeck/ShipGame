@@ -8,9 +8,12 @@ table {
     margin-bottom: -800px;
 }
 
+th {
+    text-align: left;
+}
+
 td, th {
     height: 50px;
     width: 50px;
-    border-style: solid;
-    border-width: thin;
+    border-bottom: 0.2px solid lightgray;
 }
