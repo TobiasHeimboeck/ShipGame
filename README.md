@@ -12,9 +12,9 @@ Author: Tobias Heimböck
 ---––––––––---––––––––---––––––––---––––––––---––––––––---––––––––---––––––––---––––––––----
 
 This is a game which is a project from my coding course as a Student in the Ubiqum Coding School. 
-We use Java, Spring, JavaScript, Html and CSS to programm this game and Gradle (A open-source build automation tool) 
+We use Java, Spring, JavaScript, Html and CSS to program this game and Gradle (A open-source build automation tool) 
 for compiling and dependency handling.
 
 The sourcecode is free to use.
 
-If you're interessted in more informations about this game, contact me on Twitter: twitter.com/tobias_rtab
+If you're interested in more informations about this game, contact me on Twitter: twitter.com/tobias_rtab

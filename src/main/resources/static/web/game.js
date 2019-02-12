@@ -25,8 +25,6 @@ const main = new Vue({
                 data = json;
                 this.gameData = data;
 
-                console.log("> " + window.location.pathname);
-
                 for (let x = 0; x < this.gameData.games.gamePlayers.length; x++) {
                     let currentPlayer = this.gameData.games.gamePlayers[x].player;
                     if (main.getParameterByName("gp").toString() === currentPlayer.id.toString()) {
@@ -37,8 +35,6 @@ const main = new Vue({
                 }
 
                 document.getElementById("gameInfo").innerHTML = this.player.email + "(you) vs " + this.enemy.email;
-
-                console.log(this.player.email + " (you) vs " + this.enemy.email);
 
                 for (let a = 0; a < this.gameData.ships.length; a++) {
                     for (let b = 0; b < this.gameData.ships[a].locations.length; b++) {
@@ -59,8 +55,6 @@ const main = new Vue({
                     for (let f = 0; f < this.gameData.enemy_salvoes[e].locations.length; f++) {
 
                         let currentEnemySalvo = this.gameData.enemy_salvoes[e];
-
-                        console.log(currentEnemySalvo.locations[f]);
 
                         for (let a = 0; a < this.gameData.ships.length; a++) {
                             for (let b = 0; b < this.gameData.ships[a].locations.length; b++) {

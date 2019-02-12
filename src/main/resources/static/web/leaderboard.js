@@ -1,13 +1,17 @@
 const main = new Vue({
     el: "#main",
     data: {
-        gameData: {}
+        gameData: [],
+        games: [],
+        firstPlayer: [],
+        secondPlayer: []
     },
     created() {
-       this.startFetchingAsync("/api/scoreboard");
+        this.fetchScores("/api/scoreboard");
+        this.fetchGames("/api/games");
     },
     methods: {
-        startFetchingAsync(url) {
+        fetchScores(url) {
             fetch(url, {
                 method: "GET",
             }).then(function (response) {
@@ -23,5 +27,43 @@ const main = new Vue({
                 console.log(error);
             })
         },
+        fetchGames(url) {
+            fetch(url, {
+                method: "GET",
+            }).then(function (response) {
+
+                return response.json();
+
+            }).then(function (json) {
+
+                data = json;
+                main.games = data;
+
+                for (let i = 0; i < main.games.length; i++) {
+                    main.firstPlayer = main.games[i].gamePlayers[0];
+                    main.secondPlayer = main.games[i].gamePlayers[1];
+                }
+
+            }).catch(function (error) {
+                console.log(error);
+            })
+        },
+        login() {
+            fetch("/api/login", {
+                credentials: 'include',
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: 'username=tobiasheimboeck@outlook.com&password=gregbsej'
+            }).then(response => {
+                if (response.status == 200) {
+                    console.log(response)
+                }
+            }).catch(error => {
+                console.log(error);
+            })
+        }
     }
 });

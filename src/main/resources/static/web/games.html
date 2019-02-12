@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
 
 <head>
     <meta charset="UTF-8">
@@ -11,15 +11,21 @@
 
     <div id="main">
 
-        <table id="games">
-            <tr>
-                <th>Created</th>
-                <th>id</th>
-                <th>Game Players</th>
-            </tr>
-        </table>
+        <form id="login-form">
+            <label>Name: <input type="text" name="username"></label>
+            <label>Password: <input type="text" name="password"></label>
+            <button @click="this.login">Login</button>
+        </form>
 
-        <table id="scores">
+        <form id="logout-form">
+            <button>Log out</button>
+        </form>
+
+        <ul v-for="game in games">
+            <li> {{ game.id }} {{ game.created }} {{ firstPlayer.player.email }} vs {{ secondPlayer.player.email }}</li>
+        </ul>
+
+        <table>
             <tr>
                 <th>Name</th>
                 <th>Total</th>
@@ -27,17 +33,16 @@
                 <th>Lost</th>
                 <th>Tied</th>
             </tr>
-            <tr v-for="game in gameData">
-                <td> {{ game.player }} </td>
-                <td> {{ game.total }} </td>
-                <td> {{ game.wins }} </td>
-                <td> {{ game.losses }} </td>
-                <td> {{ game.ties }} </td>
+            <tr v-for="data in gameData">
+                <td> {{ data.player }} </td>
+                <td> {{ data.total }} </td>
+                <td> {{ data.wins }} </td>
+                <td> {{ data.losses }} </td>
+                <td> {{ data.ties }} </td>
             </tr>
         </table>
-
     </div>
-    
+
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <script src="leaderboard.js"></script>
 </body>

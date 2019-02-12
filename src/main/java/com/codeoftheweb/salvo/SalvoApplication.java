@@ -6,7 +6,16 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.web.WebAttributes;
+import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Collections;
@@ -24,6 +33,7 @@ public class SalvoApplication {
                                       GamePlayerRepository gamePlayerRepository,
                                       ShipRepository shipRepository, SalvoRepository salvoRepository,
                                       ScoreRepository scoreRepository) {
+
         return (args) -> {
 
             Player player = new Player("tobiasheimboeck@outlook.com", "gregbsej");
@@ -57,6 +67,46 @@ public class SalvoApplication {
             salvoRepository.save(salvo1);
             salvoRepository.save(test);
             salvoRepository.save(test1);
+
         };
+    }
+
+    @EnableWebSecurity
+    @Configuration
+    class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
+
+        private Object o;
+
+        @Override
+        protected void configure(HttpSecurity http) throws Exception {
+            http.authorizeRequests()
+                    .antMatchers("/web/**").permitAll()
+                    .antMatchers("/api/login").permitAll()
+                    .antMatchers("/api/player").permitAll()
+                    .antMatchers("/api/games").permitAll()
+                    .antMatchers("/api/scoreboard").permitAll()
+                    .antMatchers("/favicon.ico").permitAll()
+                    .antMatchers("/rest/**").denyAll()
+                    .anyRequest().authenticated()
+                    .and()
+                    .formLogin()
+                    .usernameParameter("username")
+                    .passwordParameter("password")
+                    .loginPage("/api/login");
+
+            http.logout().logoutUrl("/api/logout");
+            http.csrf().disable();
+            http.exceptionHandling().authenticationEntryPoint((req, res, exc) -> res.sendError(HttpServletResponse.SC_UNAUTHORIZED));
+            http.formLogin().successHandler((req, res, auth) -> clearAuthenticationAttributes(req));
+            http.formLogin().failureHandler((req, res, exc) -> res.sendError(HttpServletResponse.SC_UNAUTHORIZED));
+            http.logout().logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler());
+        }
+    }
+
+    private void clearAuthenticationAttributes(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            session.removeAttribute(WebAttributes.AUTHENTICATION_EXCEPTION);
+        }
     }
 }

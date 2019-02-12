@@ -25,6 +25,7 @@ public class SalvoController {
     @Autowired
     private GamePlayerRepository gamePlayerRepository;
 
+    @Autowired
     private PlayerRepository playerRepository;
 
     @RequestMapping(value = "/games")
