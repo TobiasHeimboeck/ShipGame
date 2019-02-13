@@ -3,10 +3,10 @@ const main = new Vue({
     data: {
         gameData: [],
         games: [],
-        firstPlayer: [],
-        secondPlayer: [],
+        players: [],
         boardData: [],
-        loggedIn: false
+        loggedIn: false,
+        username: undefined
     },
     created() {
         this.fetchScores("/api/scoreboard");
@@ -41,10 +41,7 @@ const main = new Vue({
                 data = json;
                 main.games = data;
 
-                for (let i = 0; i < main.games.games.length; i++) {
-                    main.firstPlayer = main.games.games[i].gamePlayers[0];
-                    main.secondPlayer = main.games.games[i].gamePlayers[1];
-                }
+                main.players = main.games.games[i].gamePlayers;
 
             }).catch(function (error) {
                 console.log(error);
@@ -66,6 +63,9 @@ const main = new Vue({
                             body: 'username=' + username.value + '&password=' + password.value
                         }).then(response => main.setLoggedIn(true))
                         .catch(error => console.error(error));
+
+                    main.username = username.value;
+                    console.log(main.username);
                 } else {
                     console.log("Please fill out the forms.");
                 }
@@ -98,15 +98,19 @@ const main = new Vue({
             var password = document.getElementById("password");
 
             fetch("/api/players", {
-                    credentials: "include",
-                    method: "POST",
-                    headers: {
-                        "Accept": "application/json",
-                        "Content-Type": "application/x-www-form-urlencoded"
-                    },
-                    body: 'username=' + username.value + '&password=' + password.value
-                }).then(response => console.log(response))
-                .catch(error => console.error(error));
+                credentials: 'include',
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: 'username=' + username.value + '&password=' + password.value
+            }).then(r => {
+                main.setLoggedIn(true);
+                main.clearFields();
+            }).catch(function (error) {
+                console.log(error);
+            })
         },
         setLoggedIn(value) {
             main.loggedIn = value;

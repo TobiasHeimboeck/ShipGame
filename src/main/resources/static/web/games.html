@@ -26,7 +26,7 @@
         <div v-if="loggedIn">
 
             <ul v-for="(item, index) in games.games">
-                <li> <a v-bind:href="'game.html?gp=' + item.id"> {{ item.id }} {{ item.created }} {{ firstPlayer.name }} vs {{ secondPlayer.name }} </a> </li>
+                <li> <a v-bind:href="'game.html?gp=' + item.id"> {{ item.id }} {{ item.created }} {{ item.gamePlayers[0].name }} vs {{ item.gamePlayers[1].name }} </a> </li>
             </ul>
 
             <table>
@@ -45,6 +45,7 @@
                     <td> {{ data.ties }} </td>
                 </tr>
             </table>
+
         </div>
     </div>
 

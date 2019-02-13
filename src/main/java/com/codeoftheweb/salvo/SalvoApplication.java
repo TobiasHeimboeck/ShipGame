@@ -43,6 +43,7 @@ public class SalvoApplication {
         return (args) -> {
 
             Player player = new Player("tobiasheimboeck@outlook.com", "gregbsej");
+
             GamePlayer gamePlayer = new GamePlayer(player);
             Ship ship = new Ship("battleship", gamePlayer, Arrays.asList("A1", "A2", "A3"));
             Salvo salvo = new Salvo(gamePlayer, 1, Arrays.asList("C4", "C5"));
@@ -61,6 +62,27 @@ public class SalvoApplication {
 
             Score score = new Score(player, game, 1.0, new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date()));
 
+
+            Player player2 = new Player("test@outlook.com", "ehgbehgeh");
+
+            GamePlayer gamePlayer2 = new GamePlayer(player2);
+            Ship ship2 = new Ship("carrier", gamePlayer2, Arrays.asList("A1", "A2", "D1", "C3"));
+            Salvo salvo2 = new Salvo(gamePlayer2, 1, Arrays.asList("A1", "C1"));
+
+            Salvo salvo3 = new Salvo(gamePlayer2, 2, Collections.singletonList("C6"));
+            Salvo salvo4 = new Salvo(gamePlayer2, 3, Arrays.asList("A1", "A2"));
+
+            Player player3 = new Player("t@outlook.com", "heug4d");
+            GamePlayer gamePlayer3 = new GamePlayer(player3);
+            Ship ship3 = new Ship("battleship", gamePlayer3, Arrays.asList("D1", "D2"));
+            Salvo salvo5 = new Salvo(gamePlayer3, 1, Collections.singletonList("C1"));
+
+            Game game1 = new Game();
+            game1.addGamePlayer(gamePlayer2);
+            game1.addGamePlayer(gamePlayer3);
+
+            Score score1 = new Score(player2, game1, 1.0, new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date()));
+
             playerRepository.save(player);
             gameRepository.save(game);
             gamePlayerRepository.save(gamePlayer);
@@ -73,6 +95,19 @@ public class SalvoApplication {
             salvoRepository.save(salvo1);
             salvoRepository.save(test);
             salvoRepository.save(test1);
+
+            playerRepository.save(player2);
+            gameRepository.save(game1);
+            gamePlayerRepository.save(gamePlayer2);
+            shipRepository.save(ship2);
+            salvoRepository.save(salvo2);
+            scoreRepository.save(score1);
+            playerRepository.save(player3);
+            gamePlayerRepository.save(gamePlayer3);
+            shipRepository.save(ship3);
+            salvoRepository.save(salvo3);
+            salvoRepository.save(salvo4);
+            salvoRepository.save(salvo5);
         };
     }
 }
@@ -125,6 +160,7 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.formLogin().successHandler((req, res, auth) -> clearAuthenticationAttributes(req));
         http.formLogin().failureHandler((req, res, exc) -> res.sendError(HttpServletResponse.SC_UNAUTHORIZED));
         http.logout().logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler());
+
     }
 
     private void clearAuthenticationAttributes(HttpServletRequest request) {
