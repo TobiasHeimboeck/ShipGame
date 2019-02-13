@@ -86,9 +86,10 @@ class WebSecurityConfiguration extends GlobalAuthenticationConfigurerAdapter {
     @Override
     public void init(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(inputName -> {
-            Player person = playerRepository.findByUserName(inputName);
-            if (person != null) {
-                return new User(person.getUserName(), person.getPassword(),
+            Player player = playerRepository.findByUserName(inputName);
+
+            if (player != null) {
+                return new User(player.getUserName(), player.getPassword(),
                         AuthorityUtils.createAuthorityList("USER"));
             } else {
                 throw new UsernameNotFoundException("Unknown user: " + inputName);
@@ -107,8 +108,8 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/web/**").permitAll()
                 .antMatchers("/api/login").permitAll()
                 .antMatchers("/api/players").permitAll()
-                .antMatchers("/api/games").permitAll()
                 .antMatchers("/api/scoreboard").permitAll()
+                .antMatchers("/api/games").permitAll()
                 .antMatchers("/favicon.ico").permitAll()
                 .antMatchers("/rest/**").denyAll()
                 .anyRequest().authenticated()

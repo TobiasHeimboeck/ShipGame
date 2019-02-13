@@ -41,10 +41,11 @@ const main = new Vue({
                 data = json;
                 main.games = data;
 
-                for (let i = 0; i < main.games.length; i++) {
-                    main.firstPlayer = main.games[i].gamePlayers[0];
-                    main.secondPlayer = main.games[i].gamePlayers[1];
+                for (let i = 0; i < main.games.games.length; i++) {
+                    main.firstPlayer = main.games.games[i].gamePlayers[0];
+                    main.secondPlayer = main.games.games[i].gamePlayers[1];
                 }
+
             }).catch(function (error) {
                 console.log(error);
             })
@@ -92,18 +93,20 @@ const main = new Vue({
             }
         },
         signup() {
+
             var username = document.getElementById("username");
             var password = document.getElementById("password");
 
             fetch("/api/players", {
-                credentials: 'include',
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                },
-                body: 'username=' + username.value + '&password=' + password.value
-            }).then(r => console.log(r)).catch(e => console.log(e))
+                    credentials: "include",
+                    method: "POST",
+                    headers: {
+                        "Accept": "application/json",
+                        "Content-Type": "application/x-www-form-urlencoded"
+                    },
+                    body: 'username=' + username.value + '&password=' + password.value
+                }).then(response => console.log(response))
+                .catch(error => console.error(error));
         },
         setLoggedIn(value) {
             main.loggedIn = value;

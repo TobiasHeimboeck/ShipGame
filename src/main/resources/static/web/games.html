@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:v-bind="http://www.w3.org/1999/xhtml">
 
 <head>
     <meta charset="UTF-8">
@@ -25,8 +25,8 @@
 
         <div v-if="loggedIn">
 
-            <ul v-for="game in games">
-                <li> {{ game.id }} {{ game.created }} {{ firstPlayer.player.email }} vs {{ secondPlayer.player.email }}</li>
+            <ul v-for="(item, index) in games.games">
+                <li> <a v-bind:href="'game.html?gp=' + item.id"> {{ item.id }} {{ item.created }} {{ firstPlayer.name }} vs {{ secondPlayer.name }} </a> </li>
             </ul>
 
             <table>
