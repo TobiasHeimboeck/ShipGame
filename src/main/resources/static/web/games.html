@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:v-bind="http://www.w3.org/1999/xhtml">
 
-<head>
+<head column”="">
     <meta charset="UTF-8">
     <title>Salvo</title>
     <link rel="stylesheet" href="gamestyle.css">
@@ -22,11 +22,11 @@
             <button @click="logout">Sign out</button>
         </div>
 
-
         <div v-if="loggedIn">
 
             <ul v-for="(item, index) in games.games">
-                <li> <a v-bind:href="'game.html?gp=' + item.id"> {{ item.id }} {{ item.created }} {{ item.gamePlayers[0].name }} vs {{ item.gamePlayers[1].name }} </a> </li>
+                <li v-if="username === item.gamePlayers[0].name || username === item.gamePlayers[1].name"> <a v-bind:href="'game.html?gp=' + item.id"> {{ item.id }} {{ item.created }} {{ item.gamePlayers[0].name }} vs {{ item.gamePlayers[1].name }} </a> </li>
+                <li v-else="username !== item.gamePlayers[0].name || username !== item.gamePlayers[1].name"> {{ item.id }} {{ item.created }} {{ item.gamePlayers[0].name }} vs {{ item.gamePlayers[1].name }} </li>
             </ul>
 
             <table>

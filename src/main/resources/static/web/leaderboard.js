@@ -41,7 +41,10 @@ const main = new Vue({
                 data = json;
                 main.games = data;
 
-                main.players = main.games.games[i].gamePlayers;
+                for (let i = 0; i < main.games.games.length; i++) {
+                    main.players = main.games.games[i].gamePlayers;
+                }
+
 
             }).catch(function (error) {
                 console.log(error);
@@ -65,7 +68,7 @@ const main = new Vue({
                         .catch(error => console.error(error));
 
                     main.username = username.value;
-                    console.log(main.username);
+
                 } else {
                     console.log("Please fill out the forms.");
                 }
