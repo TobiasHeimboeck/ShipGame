@@ -28,11 +28,6 @@ public class SalvoController {
     @Autowired
     private PlayerRepository playerRepository;
 
-    /* @RequestMapping(value = "/games")
-    public List<Object> getAllGames() {
-        return this.repository.findAll().stream().map(this::getGameDTO).collect(toList());
-    } */
-
     @RequestMapping(value = "/scoreboard")
     public List<Object> getPlayers() {
         return playerRepository.findAll().stream().map(this::getScoreDTO).collect(toList());

@@ -6,7 +6,8 @@ const main = new Vue({
         players: [],
         boardData: [],
         loggedIn: false,
-        username: undefined
+        username: undefined,
+        usernames: []
     },
     created() {
         this.fetchScores("/api/scoreboard");
@@ -43,8 +44,13 @@ const main = new Vue({
 
                 for (let i = 0; i < main.games.games.length; i++) {
                     main.players = main.games.games[i].gamePlayers;
+
+                    for (let a = 0; a < main.games.games[i].gamePlayers.length; a++) {
+                        main.usernames.push(main.games.games[i].gamePlayers[a].name);
+                    }
                 }
 
+                console.log(main.usernames);
 
             }).catch(function (error) {
                 console.log(error);
@@ -55,23 +61,32 @@ const main = new Vue({
                 var username = document.getElementById("username");
                 var password = document.getElementById("password");
 
-                if (username.value !== "" && password.value !== "") {
-                    fetch("/api/login", {
-                            credentials: "include",
-                            method: "POST",
-                            headers: {
-                                "Accept": "application/json",
-                                "Content-Type": "application/x-www-form-urlencoded"
-                            },
-                            body: 'username=' + username.value + '&password=' + password.value
-                        }).then(response => main.setLoggedIn(true))
-                        .catch(error => console.error(error));
+                if (main.usernames.indexOf(username.value) > -1) {
 
-                    main.username = username.value;
+                    console.log(1);
+
+                    if (username.value !== "" && password.value !== "") {
+                        fetch("/api/login", {
+                                credentials: "include",
+                                method: "POST",
+                                headers: {
+                                    "Accept": "application/json",
+                                    "Content-Type": "application/x-www-form-urlencoded"
+                                },
+                                body: 'username=' + username.value + '&password=' + password.value
+                            }).then(response => main.setLoggedIn(true))
+                            .catch(error => console.error(error));
+
+                        main.username = username.value;
+
+                    } else {
+                        console.log("Please fill out the forms.");
+                    }
 
                 } else {
-                    console.log("Please fill out the forms.");
+                    alert("This username doesn't exist.");
                 }
+
             } else {
                 console.log("You are already logged in.");
             }
@@ -87,7 +102,6 @@ const main = new Vue({
                     },
                 }).then(r => {
                     main.setLoggedIn(false);
-                    main.clearFields();
                 }).catch(function (error) {
                     console.log(error);
                 })
@@ -110,17 +124,12 @@ const main = new Vue({
                 body: 'username=' + username.value + '&password=' + password.value
             }).then(r => {
                 main.setLoggedIn(true);
-                main.clearFields();
             }).catch(function (error) {
                 console.log(error);
             })
         },
         setLoggedIn(value) {
             main.loggedIn = value;
-        },
-        clearFields() {
-            document.getElementById("username").value = " ";
-            document.getElementById("password").value = " ";
         }
     }
 });

@@ -62,7 +62,6 @@ public class SalvoApplication {
 
             Score score = new Score(player, game, 1.0, new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date()));
 
-
             Player player2 = new Player("test@outlook.com", "ehgbehgeh");
 
             GamePlayer gamePlayer2 = new GamePlayer(player2);
@@ -160,7 +159,6 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.formLogin().successHandler((req, res, auth) -> clearAuthenticationAttributes(req));
         http.formLogin().failureHandler((req, res, exc) -> res.sendError(HttpServletResponse.SC_UNAUTHORIZED));
         http.logout().logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler());
-
     }
 
     private void clearAuthenticationAttributes(HttpServletRequest request) {
