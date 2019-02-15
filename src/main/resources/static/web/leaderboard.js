@@ -50,8 +50,6 @@ const main = new Vue({
                     }
                 }
 
-                console.log(main.usernames);
-
             }).catch(function (error) {
                 console.log(error);
             })
@@ -62,8 +60,6 @@ const main = new Vue({
                 var password = document.getElementById("password");
 
                 if (main.usernames.indexOf(username.value) > -1) {
-
-                    console.log(1);
 
                     if (username.value !== "" && password.value !== "") {
                         fetch("/api/login", {
@@ -80,7 +76,7 @@ const main = new Vue({
                         main.username = username.value;
 
                     } else {
-                        console.log("Please fill out the forms.");
+                        alert("Please fill out the forms.");
                     }
 
                 } else {
@@ -88,7 +84,7 @@ const main = new Vue({
                 }
 
             } else {
-                console.log("You are already logged in.");
+                alert("You are already logged in.");
             }
         },
         logout() {
@@ -106,7 +102,7 @@ const main = new Vue({
                     console.log(error);
                 })
             } else {
-                console.log("You are not logged in.");
+                alert("You are not logged in.");
             }
         },
         signup() {
@@ -127,6 +123,22 @@ const main = new Vue({
             }).catch(function (error) {
                 console.log(error);
             })
+        },
+        createGame() {
+
+            fetch("/api/games", {
+                credentials: 'include',
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+            }).then(r => {
+                console.log(r.json());
+            }).catch(function (error) {
+                console.log(error);
+            })
+
         },
         setLoggedIn(value) {
             main.loggedIn = value;

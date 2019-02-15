@@ -20,7 +20,7 @@
         <button v-if="!loggedIn" @click="signup">Sign up</button>
 
         <button v-if="loggedIn" @click="logout">Sign out</button>
-        <button v-if="loggedIn">New Game</button>
+        <button v-if="loggedIn" @click="createGame">New Game</button>
     </div>
 
     <div v-if="loggedIn">

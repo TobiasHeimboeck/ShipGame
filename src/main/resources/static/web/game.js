@@ -23,7 +23,7 @@ const main = new Vue({
             }).then(function (json) {
 
                 data = json;
-                this.gameData = data;
+                this.gameData = data.gameview;
 
                 for (let x = 0; x < this.gameData.games.gamePlayers.length; x++) {
                     let currentPlayer = this.gameData.games.gamePlayers[x].player;
