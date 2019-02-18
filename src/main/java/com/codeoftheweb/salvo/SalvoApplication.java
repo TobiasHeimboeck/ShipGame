@@ -44,7 +44,8 @@ public class SalvoApplication {
 
             Player player = new Player("tobiasheimboeck@outlook.com", "gregbsej");
 
-            GamePlayer gamePlayer = new GamePlayer(player);
+            Game game = new Game();
+            GamePlayer gamePlayer = new GamePlayer(player, game);
             Ship ship = new Ship("battleship", gamePlayer, Arrays.asList("A1", "A2", "A3"));
             Salvo salvo = new Salvo(gamePlayer, 1, Arrays.asList("C4", "C5"));
 
@@ -52,19 +53,19 @@ public class SalvoApplication {
             Salvo test1 = new Salvo(gamePlayer, 3, Arrays.asList("I2", "I3", "I4"));
 
             Player player1 = new Player("test@mail.com", "ehgueuf");
-            GamePlayer gamePlayer1 = new GamePlayer(player1);
+            GamePlayer gamePlayer1 = new GamePlayer(player1, game);
             Ship ship1 = new Ship("battleship", gamePlayer1, Arrays.asList("C2", "C3", "C4"));
             Salvo salvo1 = new Salvo(gamePlayer1, 1, Collections.singletonList("C3"));
 
-            Game game = new Game();
             game.addGamePlayer(gamePlayer);
             game.addGamePlayer(gamePlayer1);
+            Game game1 = new Game();
 
             Score score = new Score(player, game, 1.0, new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date()));
 
             Player player2 = new Player("test@outlook.com", "ehgbehgeh");
 
-            GamePlayer gamePlayer2 = new GamePlayer(player2);
+            GamePlayer gamePlayer2 = new GamePlayer(player2, game1);
             Ship ship2 = new Ship("carrier", gamePlayer2, Arrays.asList("A1", "A2", "D1", "C3"));
             Salvo salvo2 = new Salvo(gamePlayer2, 1, Arrays.asList("A1", "C1"));
 
@@ -72,11 +73,10 @@ public class SalvoApplication {
             Salvo salvo4 = new Salvo(gamePlayer2, 3, Arrays.asList("A1", "A2"));
 
             Player player3 = new Player("t@outlook.com", "heug4d");
-            GamePlayer gamePlayer3 = new GamePlayer(player3);
+            GamePlayer gamePlayer3 = new GamePlayer(player3, game1);
             Ship ship3 = new Ship("battleship", gamePlayer3, Arrays.asList("D1", "D2"));
             Salvo salvo5 = new Salvo(gamePlayer3, 1, Collections.singletonList("C1"));
 
-            Game game1 = new Game();
             game1.addGamePlayer(gamePlayer2);
             game1.addGamePlayer(gamePlayer3);
 

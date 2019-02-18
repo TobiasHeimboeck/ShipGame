@@ -26,15 +26,18 @@ const main = new Vue({
                 this.gameData = data.gameview;
 
                 for (let x = 0; x < this.gameData.games.gamePlayers.length; x++) {
-                    let currentPlayer = this.gameData.games.gamePlayers[x].player;
+                    let currentPlayer = this.gameData.games.gamePlayers[x];
                     if (main.getParameterByName("gp").toString() === currentPlayer.id.toString()) {
-                        this.player = currentPlayer;
+                        main.player = currentPlayer;
                     } else {
-                        this.enemy = currentPlayer;
+                        main.enemy = currentPlayer;
                     }
                 }
 
-                document.getElementById("gameInfo").innerHTML = this.player.email + "(you) vs " + this.enemy.email;
+                if(main.enemy.player === undefined)
+                    document.getElementById("gameInfo").innerHTML = main.player.player.email + "(you) Waiting...";
+                else
+                    document.getElementById("gameInfo").innerHTML = main.player.player.email + "(you) " + main.enemy.player.email;
 
                 for (let a = 0; a < this.gameData.ships.length; a++) {
                     for (let b = 0; b < this.gameData.ships[a].locations.length; b++) {
@@ -51,18 +54,20 @@ const main = new Vue({
                     }
                 }
 
-                for (let e = 0; e < this.gameData.enemy_salvoes.length; e++) {
-                    for (let f = 0; f < this.gameData.enemy_salvoes[e].locations.length; f++) {
+                if(this.gameData.enemy_salvoes !== undefined) {
+                    for (let e = 0; e < this.gameData.enemy_salvoes.length; e++) {
+                        for (let f = 0; f < this.gameData.enemy_salvoes[e].locations.length; f++) {
 
-                        let currentEnemySalvo = this.gameData.enemy_salvoes[e];
+                            let currentEnemySalvo = this.gameData.enemy_salvoes[e];
 
-                        for (let a = 0; a < this.gameData.ships.length; a++) {
-                            for (let b = 0; b < this.gameData.ships[a].locations.length; b++) {
-                                let currentLoc = this.gameData.ships[a].locations[b];
+                            for (let a = 0; a < this.gameData.ships.length; a++) {
+                                for (let b = 0; b < this.gameData.ships[a].locations.length; b++) {
+                                    let currentLoc = this.gameData.ships[a].locations[b];
 
-                                if (currentEnemySalvo.locations[f] == currentLoc) {
-                                    document.getElementById("P" + currentEnemySalvo.locations[f]).style.backgroundColor = "red";
-                                    document.getElementById("P" + currentEnemySalvo.locations[f]).innerHTML = currentEnemySalvo.turn;
+                                    if (currentEnemySalvo.locations[f] == currentLoc) {
+                                        document.getElementById("P" + currentEnemySalvo.locations[f]).style.backgroundColor = "red";
+                                        document.getElementById("P" + currentEnemySalvo.locations[f]).innerHTML = currentEnemySalvo.turn;
+                                    }
                                 }
                             }
                         }

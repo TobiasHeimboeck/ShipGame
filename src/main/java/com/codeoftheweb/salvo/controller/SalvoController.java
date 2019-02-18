@@ -56,18 +56,43 @@ public class SalvoController {
     }
 
     @RequestMapping(value = "/games", method = RequestMethod.POST)
-    public ResponseEntity<Map<String, Object>> createGame(@RequestParam String username) {
-        Player player = playerRepository.findByUserName(username);
+    public ResponseEntity<Map<String, Object>> createGame(Authentication auth) {
+        Player player = playerRepository.findByUserName(auth.getName());
         if (player == null) {
             return new ResponseEntity<>(makeMap("error", "Player is null"), HttpStatus.UNAUTHORIZED);
         } else {
             Game game = new Game();
-            GamePlayer gamePlayer = new GamePlayer();
-            player.addGamePlayer(gamePlayer);
-            game.addGamePlayer(gamePlayer);
+            GamePlayer gamePlayer = new GamePlayer(player, game);
             gameRepository.save(game);
             gamePlayerRepository.save(gamePlayer);
             return new ResponseEntity<>(makeMap("gpid", gamePlayer.getId()), HttpStatus.CREATED);
+        }
+    }
+
+    @RequestMapping(value = "/api/game/{id}/players")
+    public ResponseEntity<Map<String, Object>> joinGame(@PathVariable long id, Authentication auth) {
+        Player currentUser = playerRepository.findByUserName(auth.getName());
+
+        if(currentUser == null) {
+            return new ResponseEntity<>(makeMap("error", "Player is null"), HttpStatus.UNAUTHORIZED);
+        } else {
+            Game game = gameRepository.getOne(id);
+
+            if(game == null) {
+                return new ResponseEntity<>(makeMap("error", "No such game"), HttpStatus.FORBIDDEN);
+            } else {
+
+                if(game.getGamePlayers().size() == 1) {
+
+                    GamePlayer newGamePlayer = new GamePlayer(currentUser, game);
+                    gamePlayerRepository.save(newGamePlayer);
+                    return new ResponseEntity<>(makeMap("New gpid", newGamePlayer.getId()), HttpStatus.CREATED);
+
+                } else {
+                    return new ResponseEntity<>(makeMap("error", "Game is full"), HttpStatus.FORBIDDEN);
+                }
+
+            }
         }
     }
 
@@ -78,11 +103,31 @@ public class SalvoController {
             Map<String, Object> gameView = new HashMap<>();
             gameView.put("games", getGameDTO(gamePlayer.getGame()));
             gameView.put("ships", gamePlayer.getShips().stream().map(this::getShipDTO).collect(toList()));
-            loadSalvos(gameView, gamePlayer.getGame());
+
+            gameView.put("salvoes", gamePlayer.getSalvos().stream().map(this::getSalvoesDTO)
+                    .collect(toList()));
+
+            if(gamePlayer.getGame().getGamePlayers().size() == 2) {
+                gameView.put("enemy_salvoes", getEnemy(gamePlayer, auth).getSalvos().stream().map(this::getSalvoesDTO)
+                        .collect(toList()));
+            }
+
             return new ResponseEntity<>(makeMap("gameview", gameView), HttpStatus.CREATED);
         } else {
             return new ResponseEntity<>(makeMap("error", "un"), HttpStatus.UNAUTHORIZED);
         }
+    }
+
+    private GamePlayer getEnemy(GamePlayer player, Authentication auth) {
+        Player currentPlayer = playerRepository.findByUserName(auth.getName());
+        GamePlayer response = null;
+        for (GamePlayer current : player.getGame().getGamePlayers()) {
+            if (current.getPlayer() != currentPlayer) {
+                response = current;
+            }
+        }
+
+        return response;
     }
 
     private Map<String, Object> makeMap(String key, Object value) {
@@ -124,17 +169,6 @@ public class SalvoController {
         return dto;
     }
 
-    private void loadSalvos(Map<String, Object> gameView, Game game) {
-        for (GamePlayer current : game.getGamePlayers()) {
-            if (current.getId() == game.getId()) {
-                gameView.put("salvoes", current.getSalvos().stream().map(this::getSalvoesDTO)
-                        .collect(toList()));
-            } else {
-                gameView.put("enemy_salvoes", current.getSalvos().stream().map(this::getSalvoesDTO)
-                        .collect(toList()));
-            }
-        }
-    }
 
     private Map<String, Object> getSalvoesDTO(Salvo salvo) {
         final Map<String, Object> gameView = new HashMap<>();

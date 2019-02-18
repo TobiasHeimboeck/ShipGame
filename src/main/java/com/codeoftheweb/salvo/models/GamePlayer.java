@@ -34,8 +34,9 @@ public class GamePlayer {
 
     }
 
-    public GamePlayer(Player player) {
+    public GamePlayer(Player player, Game game) {
         this.player = player;
+        this.game = game;
         this.ships = new HashSet<>();
         this.salvos = new ArrayList<>();
     }

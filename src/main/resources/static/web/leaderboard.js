@@ -7,7 +7,7 @@ const main = new Vue({
         boardData: [],
         loggedIn: false,
         username: undefined,
-        usernames: []
+        usernames: [],
     },
     created() {
         this.fetchScores("/api/scoreboard");
@@ -136,11 +136,15 @@ const main = new Vue({
                     'Content-Type': 'application/x-www-form-urlencoded'
                 },
                 body: 'username=' + main.username
-            }).then(r => {
-                console.log(r);
-            }).catch(function (error) {
-                alert(error);
+            }).then(response => {
+                if(response.status === 401) {
+                    alert("Please log in!");
+                } else if (response.status === 201) {
+                    return response.json();
+                }
             })
+            .then(json => location.href = "game.html?gp=" + json.gpid)
+            .catch(e => console.log(e));
         },
         setLoggedIn(value) {
             main.loggedIn = value;
