@@ -57,14 +57,13 @@ public class SalvoController {
 
     @RequestMapping(value = "/games", method = RequestMethod.POST)
     public ResponseEntity<Map<String, Object>> createGame(@RequestParam String username) {
-        Player currentPlayer = playerRepository.findByUserName(username);
-
-        if (currentPlayer == null) {
+        Player player = playerRepository.findByUserName(username);
+        if (player == null) {
             return new ResponseEntity<>(makeMap("error", "Player is null"), HttpStatus.UNAUTHORIZED);
         } else {
             Game game = new Game();
             GamePlayer gamePlayer = new GamePlayer();
-            currentPlayer.addGamePlayer(gamePlayer);
+            player.addGamePlayer(gamePlayer);
             game.addGamePlayer(gamePlayer);
             gameRepository.save(game);
             gamePlayerRepository.save(gamePlayer);
@@ -75,7 +74,6 @@ public class SalvoController {
     @RequestMapping(value = "/game_view/{id}")
     public ResponseEntity<Map<String, Object>> getGame(@PathVariable long id, Authentication auth) {
         GamePlayer gamePlayer = gamePlayerRepository.getOne(id);
-
         if (gamePlayer.getPlayer() == playerRepository.findByUserName(auth.getName())) {
             Map<String, Object> gameView = new HashMap<>();
             gameView.put("games", getGameDTO(gamePlayer.getGame()));

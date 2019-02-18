@@ -31,7 +31,6 @@
                     {{ item.id }} {{ item.created }} {{ item.gamePlayers[0].name }} vs {{ item.gamePlayers[1].name }}
                 </a>
             </li>
-
             <li v-else="username !== item.gamePlayers[0].name || username !== item.gamePlayers[1].name">
                 {{ item.id }} {{ item.created }} {{ item.gamePlayers[0].name }} vs {{ item.gamePlayers[1].name }}
             </li>
@@ -46,11 +45,11 @@
                 <th>Tied</th>
             </tr>
             <tr v-for="data in gameData">
-                <td> {{ data.player }}</td>
-                <td> {{ data.total }}</td>
-                <td> {{ data.wins }}</td>
-                <td> {{ data.losses }}</td>
-                <td> {{ data.ties }}</td>
+                <td>{{ data.player }}</td>
+                <td>{{ data.total }}</td>
+                <td>{{ data.wins }}</td>
+                <td>{{ data.losses }}</td>
+                <td>{{ data.ties }}</td>
             </tr>
         </table>
 

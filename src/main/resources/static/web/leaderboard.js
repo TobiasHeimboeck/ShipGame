@@ -125,6 +125,8 @@ const main = new Vue({
             })
         },
         createGame() {
+            var username = document.getElementById("username");
+            var password = document.getElementById("password");
 
             fetch("/api/games", {
                 credentials: 'include',
@@ -133,12 +135,12 @@ const main = new Vue({
                     'Accept': 'application/json',
                     'Content-Type': 'application/x-www-form-urlencoded'
                 },
+                body: 'username=' + main.username
             }).then(r => {
-                console.log(r.json());
+                console.log(r);
             }).catch(function (error) {
-                console.log(error);
+                alert(error);
             })
-
         },
         setLoggedIn(value) {
             main.loggedIn = value;

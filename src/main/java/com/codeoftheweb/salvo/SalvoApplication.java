@@ -122,7 +122,6 @@ class WebSecurityConfiguration extends GlobalAuthenticationConfigurerAdapter {
     public void init(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(inputName -> {
             Player player = playerRepository.findByUserName(inputName);
-
             if (player != null) {
                 return new User(player.getUserName(), player.getPassword(),
                         AuthorityUtils.createAuthorityList("USER"));
