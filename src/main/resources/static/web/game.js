@@ -51,6 +51,7 @@ const main = new Vue({
                         let currentSalvo = this.gameData.salvoes[c];
                         document.getElementById("E" + currentSalvo.locations[d]).style.backgroundColor = "orange";
                         document.getElementById("E" + currentSalvo.locations[d]).innerHTML = currentSalvo.turn;
+                        document.getElementById("E" + currentSalvo.locations[d]).style.textAlign = "center";
                     }
                 }
 
@@ -105,5 +106,8 @@ const main = new Vue({
 
             return this.pageNumber;
         },
+        goBack() {
+            location.href = "games.html";
+        }
     }
 });

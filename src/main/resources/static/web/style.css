@@ -10,6 +10,7 @@ table {
     border-collapse: collapse;
     width: 40%;
     margin-bottom: -800px;
+    color: gray;
 }
 
 td {
@@ -17,7 +18,7 @@ td {
     width: 50px;
     border-style: solid;
     border-color: darkgray;
-    border-width: medium;
+    border-width: thin;
 }
 
 #enemy {
@@ -31,4 +32,6 @@ td {
     margin-left: 30%;
     border-radius: 10px;
     padding-top: 15px;
+    text-align: center;
+    color: white;
 }

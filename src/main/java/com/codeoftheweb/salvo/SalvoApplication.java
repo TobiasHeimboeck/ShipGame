@@ -107,7 +107,6 @@ public class SalvoApplication {
             salvoRepository.save(salvo3);
             salvoRepository.save(salvo4);
             salvoRepository.save(salvo5);
-
         };
     }
 }
@@ -119,8 +118,8 @@ class WebSecurityConfiguration extends GlobalAuthenticationConfigurerAdapter {
     private PlayerRepository playerRepository;
 
     @Override
-    public void init(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(inputName -> {
+    public void init(AuthenticationManagerBuilder authBuilder) throws Exception {
+        authBuilder.userDetailsService(inputName -> {
             Player player = playerRepository.findByUserName(inputName);
             if (player != null) {
                 return new User(player.getUserName(), player.getPassword(),

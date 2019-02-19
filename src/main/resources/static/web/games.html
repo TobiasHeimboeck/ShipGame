@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:v-bind="http://www.w3.org/1999/xhtml">
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
@@ -15,7 +15,7 @@
 
     <div id="login_container">
         <label v-if="!loggedIn">Name: <input id="username" type="text" name="username"></label>
-        <label v-if="!loggedIn">Password: <input id="password" name="password"></label>
+        <label v-if="!loggedIn">Password: <input id="password" type="password" name="password"></label>
         <button v-if="!loggedIn" @click="login">Sign in</button>
         <button v-if="!loggedIn" @click="signup">Sign up</button>
 
@@ -24,27 +24,25 @@
     </div>
 
     <div v-if="loggedIn">
-        <ul v-for="item in games.games">
-            <li v-if="username === item.gamePlayers[0].name || username === item.gamePlayers[1].name">
-                <a v-if="item.gamePlayers[1] !== undefined && username === item.gamePlayers[0].name" v-bind:href="'game.html?gp=' + item.gamePlayers[0].gpid">
-                    {{ item.id }} {{ item.created }} {{ item.gamePlayers[0].name }} vs {{ item.gamePlayers[1].name }}
-                </a>
-                <a v-if="item.gamePlayers[1] !== undefined && username === item.gamePlayers[1].name" v-bind:href="'game.html?gp=' + item.gamePlayers[1].gpid">
-                    {{ item.id }} {{ item.created }} {{ item.gamePlayers[0].name }} vs {{ item.gamePlayers[1].name }}
-                </a>
-                <a v-if="item.gamePlayers[1] === undefined" v-bind:href="'game.html?gp=' + item.gamePlayers[0].gpid">
-                    {{ item.id }} {{ item.created }} {{ item.gamePlayers[0].name }} vs NO_PLAYER
-                </a>
-            </li>
-            <li v-else="username !== item.gamePlayers[0].name || username !== item.gamePlayers[1].name">
-                <p v-if="item.gamePlayers[1] !== undefined">
-                    {{ item.id }} {{ item.created }} {{ item.gamePlayers[0].name }} vs {{ item.gamePlayers[1].name }}
-                </p>
-                <p v-if="item.gamePlayers[1] === undefined">
-                    {{ item.id }} {{ item.created }} {{ item.gamePlayers[0].name }} vs NO_PLAYER
-                </p>
-            </li>
-        </ul>
+        <table>
+            <tr>
+                <th>Start Time</th>
+                <th>Player 1</th>
+                <th>Player 2</th>
+                <th>Manage</th>
+            </tr>
+            <tr v-for="item in games.games">
+                <td>{{ item.created }}</td>
+                <td>{{ item.gamePlayers[0].name }}</td>
+                <td v-if="item.gamePlayers[1] !== undefined">{{ item.gamePlayers[1].name }}</td>
+                <td v-else="item.gamePlayers[1] === undefined"> -</td>
+
+                <td v-if="item.gamePlayers.length === 2"> Full</td>
+                <td v-else="item.gamePlayers.length == 1">
+                    <button onclick="main.joinGame(this)" :data-game="item.id">Join</button>
+                </td>
+            </tr>
+        </table>
         <table>
             <tr>
                 <th>Name</th>

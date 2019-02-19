@@ -4,6 +4,7 @@ import com.codeoftheweb.salvo.models.*;
 import com.codeoftheweb.salvo.repository.GamePlayerRepository;
 import com.codeoftheweb.salvo.repository.GameRepository;
 import com.codeoftheweb.salvo.repository.PlayerRepository;
+import com.codeoftheweb.salvo.repository.ShipRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +29,9 @@ public class SalvoController {
 
     @Autowired
     private PlayerRepository playerRepository;
+
+    @Autowired
+    private ShipRepository shipRepository;
 
     @RequestMapping(value = "/scoreboard")
     public List<Object> getPlayers() {
@@ -69,26 +73,20 @@ public class SalvoController {
         }
     }
 
-    @RequestMapping(value = "/api/game/{id}/players")
+    @RequestMapping(value = "/game/{id}/players")
     public ResponseEntity<Map<String, Object>> joinGame(@PathVariable long id, Authentication auth) {
         Player currentUser = playerRepository.findByUserName(auth.getName());
-
         if(currentUser == null) {
             return new ResponseEntity<>(makeMap("error", "Player is null"), HttpStatus.UNAUTHORIZED);
         } else {
-
             Game game = gameRepository.getOne(id);
-
             if(game == null) {
                 return new ResponseEntity<>(makeMap("error", "No such game"), HttpStatus.FORBIDDEN);
             } else {
-
                 if(game.getGamePlayers().size() == 1) {
-
                     GamePlayer newGamePlayer = new GamePlayer(currentUser, game);
                     gamePlayerRepository.save(newGamePlayer);
-                    return new ResponseEntity<>(makeMap("New gpid", newGamePlayer.getId()), HttpStatus.CREATED);
-
+                    return new ResponseEntity<>(makeMap("gpid", newGamePlayer.getId()), HttpStatus.CREATED);
                 } else {
                     return new ResponseEntity<>(makeMap("error", "Game is full"), HttpStatus.FORBIDDEN);
                 }
@@ -118,6 +116,33 @@ public class SalvoController {
         }
     }
 
+    @RequestMapping(value = "/games/players/{gamePlayerId}/ships")
+    public ResponseEntity<Map<String, Object>> getPlacedShips(@PathVariable long id, List<Ship> ships, Authentication auth) {
+        Player currentUser = playerRepository.findByUserName(auth.getName());
+        if(currentUser == null) {
+            return new ResponseEntity<>(makeMap("error", "Player is not logged in"), HttpStatus.UNAUTHORIZED);
+        } else {
+            GamePlayer gamePlayer = gamePlayerRepository.getOne(id);
+            if(gamePlayer == null) {
+                return new ResponseEntity<>(makeMap("error", "GamePlayer is null"), HttpStatus.UNAUTHORIZED);
+            } else {
+                if(currentUser != gamePlayer.getPlayer()) {
+                    return new ResponseEntity<>(makeMap("error", "Current User and GamePlayer are not equal"), HttpStatus.UNAUTHORIZED);
+                } else {
+                    if(gamePlayer.getShips().size() > 0) {
+                        return new ResponseEntity<>(makeMap("error", "User has already placed ships"), HttpStatus.FORBIDDEN);
+                    } else {
+                        for(Ship current : ships) {
+                            gamePlayer.addShip(current);
+                            shipRepository.save(current);
+                        }
+                        return new ResponseEntity<>(makeMap("created", "c"), HttpStatus.CREATED);
+                    }
+                }
+            }
+        }
+    }
+
     private GamePlayer getEnemy(GamePlayer player, Authentication auth) {
         Player currentPlayer = playerRepository.findByUserName(auth.getName());
         GamePlayer response = null;
@@ -126,7 +151,6 @@ public class SalvoController {
                 response = current;
             }
         }
-
         return response;
     }
 
