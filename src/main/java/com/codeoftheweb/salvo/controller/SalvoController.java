@@ -76,6 +76,7 @@ public class SalvoController {
         if(currentUser == null) {
             return new ResponseEntity<>(makeMap("error", "Player is null"), HttpStatus.UNAUTHORIZED);
         } else {
+
             Game game = gameRepository.getOne(id);
 
             if(game == null) {
@@ -91,7 +92,6 @@ public class SalvoController {
                 } else {
                     return new ResponseEntity<>(makeMap("error", "Game is full"), HttpStatus.FORBIDDEN);
                 }
-
             }
         }
     }
