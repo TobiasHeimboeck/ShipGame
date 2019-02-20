@@ -146,7 +146,6 @@ public class SalvoController {
         return new ResponseEntity<>(makeMap("created", "Ships placed successfully"), HttpStatus.CREATED);
     }
 
-
     private GamePlayer getEnemy(GamePlayer player, Authentication auth) {
         Player currentPlayer = playerRepository.findByUserName(auth.getName());
         GamePlayer response = null;

@@ -1,4 +1,4 @@
-const main = new Vue({
+var main = new Vue({
     el: "#main",
     data: {
         pageNumber: {},
@@ -6,7 +6,10 @@ const main = new Vue({
         rows: ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"],
         columns: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"],
         player: {},
-        enemy: {}
+        enemy: {},
+        placing: false,
+        lengthToPlace: 0,
+        ship: []
     },
     created() {
         this.loadPage("gp");
@@ -34,7 +37,7 @@ const main = new Vue({
                     }
                 }
 
-                if(main.enemy.player === undefined)
+                if (main.enemy.player === undefined)
                     document.getElementById("gameInfo").innerHTML = main.player.player.email + "(you) Waiting...";
                 else
                     document.getElementById("gameInfo").innerHTML = main.player.player.email + "(you) " + main.enemy.player.email;
@@ -55,7 +58,7 @@ const main = new Vue({
                     }
                 }
 
-                if(this.gameData.enemy_salvoes !== undefined) {
+                if (this.gameData.enemy_salvoes !== undefined) {
                     for (let e = 0; e < this.gameData.enemy_salvoes.length; e++) {
                         for (let f = 0; f < this.gameData.enemy_salvoes[e].locations.length; f++) {
 
@@ -74,7 +77,6 @@ const main = new Vue({
                         }
                     }
                 }
-
             }).catch(function (error) {
                 console.log(error);
             })
@@ -97,7 +99,6 @@ const main = new Vue({
             return decodeURIComponent(results[2].replace(/\+/g, ' '));
         },
         loadPage(search) {
-
             var reg = /(?:[?&]([^?&#=]+)(?:=([^&#]*))?)(?:#.*)?/g;
 
             search.replace(reg, function (match, param, val) {
@@ -107,29 +108,57 @@ const main = new Vue({
             return this.pageNumber;
         },
         placeShips() {
-
             fetch("/api/games/players/" + main.getParameterByName("gp") + "/ships", {
-                credentials: 'include',
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify([
-                    {
-                        type: "destroyer",
-                        locations: ["A5", "B1", "C1"]
+                    credentials: 'include',
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify([
+                        {
+                            type: "destroyer",
+                            locations: ["A5", "B1", "C1"]
                     }
                 ])
-            }).then(response => {
-                if(response.status === 201) {
-                    location.reload();
+                }).then(response => {
+                    if (response.status === 201) {
+                        location.reload();
+                    }
+                })
+                .catch(e => console.log(e));
+        },
+        getValue(current, id) {
+            if (document.getElementById(id).innerHTML === "1") {
+                if (!main.placing) {
+                    main.placing = true;
+                    main.lengthToPlace = current.getAttribute("data-length");
+                    document.getElementById(id).innerHTML = "0";
                 }
-            })
-            .catch(e => console.log(e));
+            }
         },
         goBack() {
             location.href = "games.html";
         }
     }
 });
+
+document.getElementById("player").addEventListener("click", function () {
+    if (main.placing) {
+        var id = event.target.id;
+        var shipLength = document.getElementById(id).getAttribute("data-length");
+        var r = /\d+/;
+
+        if (myonoffswitch.checked) {
+
+            document.getElementById(id).style.backgroundColor = "cyan";
+
+            for (let i = id.match(r); i < parseInt(id.match(r)) + parseInt(main.lengthToPlace); i++) {
+                var replaced = id.replace(/[0-9]/g, '');
+                document.getElementById(replaced + i).style.backgroundColor = "cyan";
+            }
+
+            main.placing = false;
+        }
+    }
+})
