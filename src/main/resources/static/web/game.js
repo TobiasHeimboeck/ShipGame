@@ -106,6 +106,28 @@ const main = new Vue({
 
             return this.pageNumber;
         },
+        placeShips() {
+
+            fetch("/api/games/players/" + main.getParameterByName("gp") + "/ships", {
+                credentials: 'include',
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify([
+                    {
+                        type: "destroyer",
+                        locations: ["A5", "B1", "C1"]
+                    }
+                ])
+            }).then(response => {
+                if(response.status === 201) {
+                    location.reload();
+                }
+            })
+            .catch(e => console.log(e));
+        },
         goBack() {
             location.href = "games.html";
         }

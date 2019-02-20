@@ -18,7 +18,6 @@
         <label v-if="!loggedIn">Password: <input id="password" type="password" name="password"></label>
         <button v-if="!loggedIn" @click="login">Sign in</button>
         <button v-if="!loggedIn" @click="signup">Sign up</button>
-
         <button v-if="loggedIn" @click="logout">Sign out</button>
         <button v-if="loggedIn" @click="createGame">New Game</button>
     </div>
@@ -37,7 +36,17 @@
                 <td v-if="item.gamePlayers[1] !== undefined">{{ item.gamePlayers[1].name }}</td>
                 <td v-else="item.gamePlayers[1] === undefined"> -</td>
 
-                <td v-if="item.gamePlayers.length === 2"> Full</td>
+                <td v-if="item.gamePlayers.length === 2">
+                    <div v-if="item.gamePlayers[0].name === username">
+                        <button onclick="main.accessGame(this)" :data-game="item.gamePlayers[0].gpid">Return</button>
+                    </div>
+                    <div v-else-if="item.gamePlayers[1].name === username">
+                        <button onclick="main.accessGame(this)" :data-game="item.gamePlayers[1].gpid">Return</button>
+                    </div>
+                    <div v-else="item.gamePlayers[0].name !== username || item.gamePlayers[1].name !== username">
+                        Full
+                    </div>
+                </td>
                 <td v-else="item.gamePlayers.length == 1">
                     <button onclick="main.joinGame(this)" :data-game="item.id">Join</button>
                 </td>

@@ -162,6 +162,10 @@ const main = new Vue({
             .then(json => location.href = "game.html?gp=" + json.gpid)
             .catch(e => console.log(e));
         },
+        accessGame(current) {
+            var gameID = current.getAttribute("data-game");
+            location.href = "game.html?gp=" + gameID;
+        },
         setLoggedIn(value) {
             main.loggedIn = value;
         }
