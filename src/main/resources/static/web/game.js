@@ -137,6 +137,20 @@ var main = new Vue({
                 }
             }
         },
+        
+        nextLetter(s) {
+            return s.replace(/([a-iA-I])[^a-iA-I]*$/, function (a) {
+                var c = a.charCodeAt(0);
+                switch (c) {
+                    case 90:
+                        return 'A';
+                    case 122:
+                        return 'a';
+                    default:
+                        return String.fromCharCode(++c);
+                }
+            });
+        },
         goBack() {
             location.href = "games.html";
         }
@@ -148,11 +162,11 @@ document.getElementById("player").addEventListener("click", function () {
         var id = event.target.id;
         var regex = /\d+/;
 
-        if (myonoffswitch.checked) { // horizontally
+        if (myonoffswitch.checked) {
 
             document.getElementById(id).style.backgroundColor = "cyan";
 
-            for (let i = id.match(regex); i < parseInt(id.match(regex)) + parseInt(main.lengthToPlace); i++) {
+            for (var i = id.match(regex); i < parseInt(id.match(regex)) + parseInt(main.lengthToPlace); i++) {
                 var replaced = id.replace(/[0-9]/g, '');
                 document.getElementById(replaced + i).style.backgroundColor = "cyan";
             }
@@ -160,30 +174,31 @@ document.getElementById("player").addEventListener("click", function () {
             main.lengthToPlace = 0;
             main.placing = false;
 
-        } else { // vertically
+        } else {
 
             var cell = main.columns[parseInt(id.match(regex)) - 1];
 
-            /* for (var i = parseInt(id.match(regex)); i < parseInt(id.match(regex)) + parseInt(main.lengthToPlace); i++) {
-                var newId = 'P' + main.rows[id.match(regex)] + cell;
-                
-                
-                console.log(newId);
-                // document.getElementById(newId).style.backgroundColor = "cyan";
-            } */
+            // console.log(id.replace(/[0-9]/g, ''));
 
-            for (var row in main.rows) {
-                if (row < main.lengthToPlace) {
-                    
-                    var r = parseInt(row) + parseInt(main.lengthToPlace);
-
-                    var currId = "P" + main.rows[r] + cell;
-
-                    console.log(r);
-                    document.getElementById(currId).style.backgroundColor = "cyan";
-
-                }
+            var index = 0;
+            var response = [];
+            
+            do {
+                if(response.length === 0)
+                    response.push(id.replace(/[0-9]/g, ''));
+                else
+                    response.push(main.nextLetter(response[response.length -1]));
+                index++;
+            } while(index < main.lengthToPlace); 
+            
+            for(var i = 0; i < response.length; i++) {
+                var realID = response[i] + cell;
+                console.log(realID);
+                document.getElementById(realID).style.backgroundColor = "cyan";
             }
+            
+            response = [];
+            console.log(response);
 
             main.lengthToPlace = 0;
             main.placing = false;
