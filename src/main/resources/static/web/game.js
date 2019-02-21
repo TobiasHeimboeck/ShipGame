@@ -146,18 +146,46 @@ var main = new Vue({
 document.getElementById("player").addEventListener("click", function () {
     if (main.placing) {
         var id = event.target.id;
-        var shipLength = document.getElementById(id).getAttribute("data-length");
-        var r = /\d+/;
+        var regex = /\d+/;
 
-        if (myonoffswitch.checked) {
+        if (myonoffswitch.checked) { // horizontally
 
             document.getElementById(id).style.backgroundColor = "cyan";
 
-            for (let i = id.match(r); i < parseInt(id.match(r)) + parseInt(main.lengthToPlace); i++) {
+            for (let i = id.match(regex); i < parseInt(id.match(regex)) + parseInt(main.lengthToPlace); i++) {
                 var replaced = id.replace(/[0-9]/g, '');
                 document.getElementById(replaced + i).style.backgroundColor = "cyan";
             }
 
+            main.lengthToPlace = 0;
+            main.placing = false;
+
+        } else { // vertically
+
+            var cell = main.columns[parseInt(id.match(regex)) - 1];
+
+            /* for (var i = parseInt(id.match(regex)); i < parseInt(id.match(regex)) + parseInt(main.lengthToPlace); i++) {
+                var newId = 'P' + main.rows[id.match(regex)] + cell;
+                
+                
+                console.log(newId);
+                // document.getElementById(newId).style.backgroundColor = "cyan";
+            } */
+
+            for (var row in main.rows) {
+                if (row < main.lengthToPlace) {
+                    
+                    var r = parseInt(row) + parseInt(main.lengthToPlace);
+
+                    var currId = "P" + main.rows[r] + cell;
+
+                    console.log(r);
+                    document.getElementById(currId).style.backgroundColor = "cyan";
+
+                }
+            }
+
+            main.lengthToPlace = 0;
             main.placing = false;
         }
     }
