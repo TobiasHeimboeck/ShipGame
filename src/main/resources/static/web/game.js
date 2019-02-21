@@ -84,8 +84,7 @@ var main = new Vue({
         getShipLocations() {
             for (let a = 0; a < this.gameData.ships.length; a++) {
                 for (let b = 0; b < this.gameData.ships[a].locations.length; b++) {
-                    let currentLoc = this.gameData.ships[a].locations[b];
-                    document.getElementById("P" + currentLoc).style.backgroundColor = "cyan";
+                    document.getElementById("P" + this.gameData.ships[a].locations[b]).style.backgroundColor = "cyan";
                 }
             }
         },
@@ -137,7 +136,6 @@ var main = new Vue({
                 }
             }
         },
-        
         nextLetter(s) {
             return s.replace(/([a-iA-I])[^a-iA-I]*$/, function (a) {
                 var c = a.charCodeAt(0);
@@ -162,46 +160,53 @@ document.getElementById("player").addEventListener("click", function () {
         var id = event.target.id;
         var regex = /\d+/;
 
-        if (myonoffswitch.checked) {
+        if (!document.getElementById(id).hasAttribute("hasShip")) {
 
-            document.getElementById(id).style.backgroundColor = "cyan";
+            if (myonoffswitch.checked) {
 
-            for (var i = id.match(regex); i < parseInt(id.match(regex)) + parseInt(main.lengthToPlace); i++) {
-                var replaced = id.replace(/[0-9]/g, '');
-                document.getElementById(replaced + i).style.backgroundColor = "cyan";
+                document.getElementById(id).style.backgroundColor = "cyan";
+
+                for (var i = id.match(regex); i < parseInt(id.match(regex)) + parseInt(main.lengthToPlace); i++) {
+                    var replaced = id.replace(/[0-9]/g, '');
+                    document.getElementById(replaced + i).style.backgroundColor = "cyan";
+                    document.getElementById(replaced + i).setAttribute("hasShip", true);
+                }
+
+                main.lengthToPlace = 0;
+                main.placing = false;
+
+            } else {
+
+                var cell = main.columns[parseInt(id.match(regex)) - 1];
+                var index = 0;
+                var response = [];
+
+                do {
+                    if (response.length === 0) {
+                        response.push(id.replace(/[0-9]/g, ''));
+                    } else {
+                        response.push(main.nextLetter(response[response.length - 1]));
+                    }
+                    index++;
+                } while (index < main.lengthToPlace);
+
+                for (var i = 0; i < response.length; i++) {
+                    var realID = response[i] + cell;
+                    document.getElementById(realID).style.backgroundColor = "cyan";
+                    document.getElementById(realID).setAttribute("hasShip", true);
+                }
+
+                response = [];
+
+                main.lengthToPlace = 0;
+                main.placing = false;
+
             }
-
-            main.lengthToPlace = 0;
-            main.placing = false;
-
         } else {
-
-            var cell = main.columns[parseInt(id.match(regex)) - 1];
-
-            // console.log(id.replace(/[0-9]/g, ''));
-
-            var index = 0;
-            var response = [];
-            
-            do {
-                if(response.length === 0)
-                    response.push(id.replace(/[0-9]/g, ''));
-                else
-                    response.push(main.nextLetter(response[response.length -1]));
-                index++;
-            } while(index < main.lengthToPlace); 
-            
-            for(var i = 0; i < response.length; i++) {
-                var realID = response[i] + cell;
-                console.log(realID);
-                document.getElementById(realID).style.backgroundColor = "cyan";
-            }
-            
-            response = [];
-            console.log(response);
-
-            main.lengthToPlace = 0;
-            main.placing = false;
+            document.getElementById(id).style.backgroundColor = "red";
+            setTimeout(function () {
+                document.getElementById(id).style.backgroundColor = "cyan";
+            }, 300);
         }
     }
 })
