@@ -81,6 +81,15 @@ var main = new Vue({
                 console.log(error);
             })
         },
+        addIdsToTable() {
+            for (var i = 0; i < document.getElementsByTagName("tr").length; i++) {
+                var curr = document.getElementsByTagName("tr")[i];
+                if (curr.hasAttribute("rowable")) {
+                    curr.setAttribute("data-id", i);
+                    curr.setAttribute("data-letter", this.rows[i - 1]);
+                }
+            }
+        },
         getShipLocations() {
             for (let a = 0; a < this.gameData.ships.length; a++) {
                 for (let b = 0; b < this.gameData.ships[a].locations.length; b++) {
@@ -95,6 +104,9 @@ var main = new Vue({
                 results = regex.exec(url);
             if (!results) return null;
             if (!results[2]) return '';
+
+            this.addIdsToTable();
+
             return decodeURIComponent(results[2].replace(/\+/g, ' '));
         },
         loadPage(search) {
@@ -164,16 +176,44 @@ document.getElementById("player").addEventListener("click", function () {
 
             if (myonoffswitch.checked) {
 
-                document.getElementById(id).style.backgroundColor = "cyan";
+                var cell = main.columns[parseInt(id.match(regex)) - 1];
 
-                for (var i = id.match(regex); i < parseInt(id.match(regex)) + parseInt(main.lengthToPlace); i++) {
-                    var replaced = id.replace(/[0-9]/g, '');
-                    document.getElementById(replaced + i).style.backgroundColor = "cyan";
-                    document.getElementById(replaced + i).setAttribute("hasShip", true);
+                if (11 - cell < main.lengthToPlace) {
+                    console.log("Ship is to long!");
+                } else {
+
+                    var cellsToPlace = [];
+
+                    for (var i = id.match(regex); i < parseInt(id.match(regex)) + parseInt(main.lengthToPlace); i++) {
+                        var replaced = id.replace(/[0-9]/g, '');
+                        if (!document.getElementById(replaced + i).hasAttribute("hasShip")) {
+                            cellsToPlace.push(replaced + i);
+                        } else {
+                            cellsToPlace = [];
+                        }
+                    }
+                    
+                    console.log(cellsToPlace);
+
+                    if (cellsToPlace.length > 0) {
+                        console.log("Length: " + cellsToPlace.length);
+
+                        document.getElementById(id).style.backgroundColor = "cyan";
+                        
+                        for (var cell1 = 0; cell1 < cellsToPlace.length; cell1++) {
+                            console.log(cellsToPlace[cell1]);
+                            document.getElementById(cellsToPlace[cell1]).style.backgroundColor = "cyan";
+                            document.getElementById(cellsToPlace[cell1]).setAttribute("hasShip", true);
+                        }
+
+                        response = [];
+
+                        main.lengthToPlace = 0;
+                        main.placing = false;
+                    } else {
+                        console.log("No cells to place. There is already a ship placed.");
+                    }
                 }
-
-                main.lengthToPlace = 0;
-                main.placing = false;
 
             } else {
 
@@ -181,32 +221,67 @@ document.getElementById("player").addEventListener("click", function () {
                 var index = 0;
                 var response = [];
 
-                do {
-                    if (response.length === 0) {
-                        response.push(id.replace(/[0-9]/g, ''));
-                    } else {
-                        response.push(main.nextLetter(response[response.length - 1]));
-                    }
-                    index++;
-                } while (index < main.lengthToPlace);
+                var rowID = 0;
 
-                for (var i = 0; i < response.length; i++) {
-                    var realID = response[i] + cell;
-                    document.getElementById(realID).style.backgroundColor = "cyan";
-                    document.getElementById(realID).setAttribute("hasShip", true);
+                for (var r = 0; r < document.getElementsByTagName("tr").length; r++) {
+                    var curr = document.getElementsByTagName("tr")[r];
+                    if (curr.hasAttribute("rowable")) {
+                        if ("P" + curr.getAttribute("data-letter") === id.replace(/[0-9]/g, '')) {
+                            rowID = curr.getAttribute("data-id");
+                        }
+                    }
                 }
 
-                response = [];
+                if (11 - rowID < main.lengthToPlace) {
+                    console.log("Ship is to long!");
+                } else {
 
-                main.lengthToPlace = 0;
-                main.placing = false;
+                    do {
+                        if (response.length === 0) {
+                            response.push(id.replace(/[0-9]/g, ''));
+                        } else {
+                            response.push(main.nextLetter(response[response.length - 1]));
+                        }
+                        index++;
+                    } while (index < main.lengthToPlace);
 
+                    var cellsToPlace = []
+
+                    for (var i = 0; i < response.length; i++) {
+                        var realID = response[i] + cell;
+                        if (!document.getElementById(realID).hasAttribute("hasShip")) {
+                            cellsToPlace.push(realID);
+                        } else {
+                            cellsToPlace = [];
+                        }
+                    }
+
+                    console.log(cellsToPlace);
+                    console.log(cellsToPlace.length);
+
+                    if (cellsToPlace.length > 0) {
+                        console.log("Length: " + cellsToPlace.length);
+
+                        for (var cell1 = 0; cell1 < cellsToPlace.length; cell1++) {
+                            console.log(cellsToPlace[cell1]);
+                            document.getElementById(cellsToPlace[cell1]).style.backgroundColor = "cyan";
+                            document.getElementById(cellsToPlace[cell1]).setAttribute("hasShip", true);
+                        }
+
+                        response = [];
+
+                        main.lengthToPlace = 0;
+                        main.placing = false;
+                    } else {
+                        console.log("No cells to place. There is already a ship placed.");
+                    }
+                }
             }
         } else {
             document.getElementById(id).style.backgroundColor = "red";
             setTimeout(function () {
                 document.getElementById(id).style.backgroundColor = "cyan";
-            }, 300);
+            }, 100);
         }
     }
 })

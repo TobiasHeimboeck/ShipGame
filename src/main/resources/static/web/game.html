@@ -19,7 +19,7 @@
                 <th></th>
                 <th v-for="column in columns">{{ column }}</th>
             </tr>
-            <tr v-for="row in rows">
+            <tr rowable="true" v-for="row in rows">
                 <th>{{ row }}</th>
                 <td v-for="column in columns" v-bind:id="'P' + row + column"></td>
             </tr>
