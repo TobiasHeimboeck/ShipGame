@@ -7,91 +7,101 @@
 </head>
 
 <body>
-<div id="main">
-    <button @click="goBack">Back</button>
-    <button @click="placeShips">Test POST a Ship</button>
-    <h5 id="gameInfo"></h5>
+    <div id="main">
+        <button @click="goBack">Back</button>
+        <h5 id="gameInfo"></h5>
 
-    <div class="content">
-        <table id="player">
+        <div class="content">
+            <table id="player">
+                <tbody>
+                    <tr>
+                        <th></th>
+                        <th v-for="column in columns">{{ column }}</th>
+                    </tr>
+                    <tr rowable="true" v-for="row in rows">
+                        <th>{{ row }}</th>
+                        <td v-for="column in columns" v-bind:id="'P' + row + column"></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <table id="enemy">
+                <tbody>
+                    <tr>
+                        <th></th>
+                        <th v-for="column in columns">{{ column }}</th>
+                    </tr>
+                    <tr v-for="row in rows">
+                        <th>{{ row }}</th>
+                        <td v-for="column in columns" v-bind:id="'E' + row + column"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <table class="add" id="showShips">
             <tbody>
-            <tr>
-                <th></th>
-                <th v-for="column in columns">{{ column }}</th>
-            </tr>
-            <tr rowable="true" v-for="row in rows">
-                <th>{{ row }}</th>
-                <td v-for="column in columns" v-bind:id="'P' + row + column"></td>
-            </tr>
+                <tr>
+                    <th><button data-type="carrier" onclick="main.getValue(this, 'carrier')" data-length="5">Select</button> (<a id="carrier">1</a>) Aircraft Carrier </th>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <th><button data-type="battleship" onclick="main.getValue(this, 'battleship')" data-length="4">Select</button> (<a id="battleship">1</a>) Battleship</th>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <th><button data-type="submarine" onclick="main.getValue(this, 'submarine')" data-length="3">Select</button> (<a id="submarine">1</a>) Submarine</th>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <th><button data-type="destroyer" onclick="main.getValue(this, 'destroyer')" data-length="3">Select</button> (<a id="destroyer">1</a>) Destroyer</th>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <th><button data-type="patrolboat" onclick="main.getValue(this, 'patrolboat')" data-length="2">Select</button> (<a id="patrolboat">1</a>) Patrol Boat</th>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <th>Finish: <button onclick="main.done()">Done</button></th>
+                </tr>
             </tbody>
         </table>
 
-        <table id="enemy">
+        <div class="onoffswitch">
+            <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch">
+            <label class="onoffswitch-label" for="myonoffswitch">
+                <span class="onoffswitch-inner"></span>
+                <span class="onoffswitch-switch"></span>
+            </label>
+        </div>
+
+        <table class="add2" id="showShips">
             <tbody>
-            <tr>
-                <th></th>
-                <th v-for="column in columns">{{ column }}</th>
-            </tr>
-            <tr v-for="row in rows">
-                <th>{{ row }}</th>
-                <td v-for="column in columns" v-bind:id="'E' + row + column"></td>
-            </tr>
+                <tr>
+                    <th> Salvos: (<a>{{ shots }}</a>) </th>
+                </tr>
+                <tr>
+                    <th>Finish: <button onclick="main.doneSalvos()">Done</button></th>
+                </tr>
             </tbody>
         </table>
+
     </div>
 
-    <table id="showShips">
-        <tbody>
-        <tr>
-            <th><button onclick="main.getValue(this, 'carrier')" data-length="5">Select</button> (<a id="carrier">1</a>) Aircraft Carrier </th>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-        </tr>
-        <tr>
-            <th><button onclick="main.getValue(this, 'battleship')" data-length="4">Select</button> (<a id="battleship">1</a>) Battleship</th>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-        </tr>
-        <tr>
-            <th><button onclick="main.getValue(this, 'submarine')" data-length="3">Select</button> (<a id="submarine">1</a>) Submarine</th>
-            <td></td>
-            <td></td>
-            <td></td>
-        </tr>
-        <tr>
-            <th><button onclick="main.getValue(this, 'destroyer')" data-length="3">Select</button> (<a id="destroyer">1</a>) Destroyer</th>
-            <td></td>
-            <td></td>
-            <td></td>
-        </tr>
-        <tr>
-            <th><button onclick="main.getValue(this, 'patrolboat')" data-length="2">Select</button> (<a id="patrolboat">1</a>) Patrol Boat</th>
-            <td></td>
-            <td></td>
-        </tr>
-        <tr>
-            <th>Finish: <button>Done</button></th>
-        </tr>
-        </tbody>
-    </table>
-
-    <div class="onoffswitch">
-        <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch">
-        <label class="onoffswitch-label" for="myonoffswitch">
-            <span class="onoffswitch-inner"></span>
-            <span class="onoffswitch-switch"></span>
-        </label>
-    </div>
-
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-<script src="game.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="game.js"></script>
 </body>
 
 </html>

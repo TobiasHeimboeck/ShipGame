@@ -9,7 +9,11 @@ var main = new Vue({
         enemy: {},
         placing: false,
         lengthToPlace: 0,
-        ship: []
+        ship: [],
+        ships: [],
+        currentType: "",
+        salvoLocations: [],
+        shots: 5
     },
     created() {
         this.loadPage("gp");
@@ -45,16 +49,18 @@ var main = new Vue({
                 for (let a = 0; a < this.gameData.ships.length; a++) {
                     for (let b = 0; b < this.gameData.ships[a].locations.length; b++) {
                         let currentLoc = this.gameData.ships[a].locations[b];
-                        document.getElementById("P" + currentLoc).style.backgroundColor = "cyan";
+                        console.log(currentLoc);
+                        document.getElementById(currentLoc).style.backgroundColor = "cyan";
+                        document.getElementById(currentLoc).setAttribute("hasShip", true);
                     }
                 }
 
                 for (let c = 0; c < this.gameData.salvoes.length; c++) {
                     for (let d = 0; d < this.gameData.salvoes[c].locations.length; d++) {
                         let currentSalvo = this.gameData.salvoes[c];
-                        document.getElementById("E" + currentSalvo.locations[d]).style.backgroundColor = "orange";
-                        document.getElementById("E" + currentSalvo.locations[d]).innerHTML = currentSalvo.turn;
-                        document.getElementById("E" + currentSalvo.locations[d]).style.textAlign = "center";
+                        document.getElementById(currentSalvo.locations[d]).style.backgroundColor = "orange";
+                        document.getElementById(currentSalvo.locations[d]).innerHTML = currentSalvo.turn;
+                        document.getElementById(currentSalvo.locations[d]).style.textAlign = "center";
                     }
                 }
 
@@ -118,7 +124,7 @@ var main = new Vue({
 
             return this.pageNumber;
         },
-        placeShips() {
+        placeShips(ships) {
             fetch("/api/games/players/" + main.getParameterByName("gp") + "/ships", {
                     credentials: 'include',
                     method: 'POST',
@@ -126,12 +132,23 @@ var main = new Vue({
                         'Accept': 'application/json',
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify([
-                        {
-                            type: "destroyer",
-                            locations: ["A5", "B1", "C1"]
+                    body: JSON.stringify(ships)
+                }).then(response => {
+                    if (response.status === 201) {
+                        location.reload();
                     }
-                ])
+                })
+                .catch(e => console.log(e));
+        },
+        placeSalvos(salvos) {
+            fetch("/api/games/players/" + main.getParameterByName("gp") + "/salvos", {
+                    credentials: 'include',
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(salvos)
                 }).then(response => {
                     if (response.status === 201) {
                         location.reload();
@@ -145,6 +162,7 @@ var main = new Vue({
                     main.placing = true;
                     main.lengthToPlace = current.getAttribute("data-length");
                     document.getElementById(id).innerHTML = "0";
+                    main.currentType = current.getAttribute("data-type");
                 }
             }
         },
@@ -161,11 +179,59 @@ var main = new Vue({
                 }
             });
         },
+        done() {
+            main.placeShips(main.ships);
+        },
+        doneSalvos() {
+            var salvos = [];
+
+            salvos.push({
+                turn: 1,
+                locations: main.salvoLocations
+            });
+
+            main.placeSalvos(salvos);
+        },
         goBack() {
             location.href = "games.html";
         }
     }
 });
+
+document.getElementById("enemy").addEventListener("click", function () {
+
+    var id = event.target.id;
+
+    if (document.getElementById(id) !== null) {
+        if (main.shots > 0) {
+            if (!document.getElementById(id).hasAttribute("cell-hitted")) {
+                main.shots--;
+                document.getElementById(id).style.backgroundColor = "orange";
+                document.getElementById(id).setAttribute("cell-hitted", true);
+                document.getElementById(id).style.textAlign = "center";
+                document.getElementById(id).innerHTML = "1";
+                main.salvoLocations.push(id);
+            } else {
+                document.getElementById(id).style.backgroundColor = "red";
+                setTimeout(function () {
+                    document.getElementById(id).style.backgroundColor = "orange";
+                }, 100);
+            }
+        } else {
+            if(!document.getElementById(id).hasAttribute("cell-hitted")) {
+                document.getElementById(id).style.backgroundColor = "red";
+                setTimeout(function () {
+                    document.getElementById(id).style.backgroundColor = "white";
+                }, 100);
+            } else {
+                document.getElementById(id).style.backgroundColor = "red";
+                    setTimeout(function () {
+                    document.getElementById(id).style.backgroundColor = "orange";
+                }, 100);
+            }
+        }
+    }
+})
 
 document.getElementById("player").addEventListener("click", function () {
     if (main.placing) {
@@ -192,21 +258,23 @@ document.getElementById("player").addEventListener("click", function () {
                             cellsToPlace = [];
                         }
                     }
-                    
-                    console.log(cellsToPlace);
 
                     if (cellsToPlace.length > 0) {
-                        console.log("Length: " + cellsToPlace.length);
 
                         document.getElementById(id).style.backgroundColor = "cyan";
-                        
+
                         for (var cell1 = 0; cell1 < cellsToPlace.length; cell1++) {
-                            console.log(cellsToPlace[cell1]);
                             document.getElementById(cellsToPlace[cell1]).style.backgroundColor = "cyan";
                             document.getElementById(cellsToPlace[cell1]).setAttribute("hasShip", true);
                         }
 
+                        main.ships.push({
+                            type: main.currentType,
+                            locations: cellsToPlace
+                        });
+
                         response = [];
+                        main.currentType = "";
 
                         main.lengthToPlace = 0;
                         main.placing = false;
@@ -256,19 +324,20 @@ document.getElementById("player").addEventListener("click", function () {
                         }
                     }
 
-                    console.log(cellsToPlace);
-                    console.log(cellsToPlace.length);
-
                     if (cellsToPlace.length > 0) {
-                        console.log("Length: " + cellsToPlace.length);
 
                         for (var cell1 = 0; cell1 < cellsToPlace.length; cell1++) {
-                            console.log(cellsToPlace[cell1]);
                             document.getElementById(cellsToPlace[cell1]).style.backgroundColor = "cyan";
                             document.getElementById(cellsToPlace[cell1]).setAttribute("hasShip", true);
                         }
 
+                        main.ships.push({
+                            type: main.currentType,
+                            locations: cellsToPlace
+                        });
+
                         response = [];
+                        main.currentType = "";
 
                         main.lengthToPlace = 0;
                         main.placing = false;

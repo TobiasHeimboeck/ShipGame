@@ -41,6 +41,11 @@ public class GamePlayer {
         this.salvos = new ArrayList<>();
     }
 
+    public void addSalvo(Salvo salvo) {
+        salvo.setPlayer(this);
+        salvos.add(salvo);
+    }
+
     public void addShip(Ship ship) {
         ship.setGamePlayer(this);
         ships.add(ship);

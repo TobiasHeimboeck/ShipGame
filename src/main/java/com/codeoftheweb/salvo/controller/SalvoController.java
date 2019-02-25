@@ -1,10 +1,7 @@
 package com.codeoftheweb.salvo.controller;
 
 import com.codeoftheweb.salvo.models.*;
-import com.codeoftheweb.salvo.repository.GamePlayerRepository;
-import com.codeoftheweb.salvo.repository.GameRepository;
-import com.codeoftheweb.salvo.repository.PlayerRepository;
-import com.codeoftheweb.salvo.repository.ShipRepository;
+import com.codeoftheweb.salvo.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +29,9 @@ public class SalvoController {
 
     @Autowired
     private ShipRepository shipRepository;
+
+    @Autowired
+    private SalvoRepository salvoRepository;
 
     @RequestMapping(value = "/scoreboard")
     public List<Object> getPlayers() {
@@ -116,6 +116,36 @@ public class SalvoController {
         }
     }
 
+    @RequestMapping(value = "/games/players/{gpid}/salvos", method = RequestMethod.POST)
+    public ResponseEntity<Object> placeSalvo(@PathVariable long gpid, @RequestBody List<String> salvo, Authentication auth) {
+        Player currentUser = playerRepository.findByUserName(auth.getName());
+
+        if (currentUser == null) {
+            return new ResponseEntity<>(makeMap("error", "Player is not logged in"), HttpStatus.UNAUTHORIZED);
+        }
+
+        GamePlayer gamePlayer = gamePlayerRepository.getOne(gpid);
+
+        if (gamePlayer == null) {
+            return new ResponseEntity<>(makeMap("error", "GamePlayer is null"), HttpStatus.UNAUTHORIZED);
+        }
+
+        if (currentUser != gamePlayer.getPlayer()) {
+            return new ResponseEntity<>(makeMap("error", "Current User and GamePlayer are not equal"), HttpStatus.UNAUTHORIZED);
+        }
+
+        if (gamePlayer.getSalvos().isEmpty()) {
+            return new ResponseEntity<>(makeMap("error", " user already has submitted a salvo for the turn listed"), HttpStatus.FORBIDDEN);
+        }
+
+        int currentTurn = gamePlayer.getSalvos().size() + 1;
+        Salvo salvoObject = new Salvo(gamePlayer, currentTurn, salvo);
+
+        salvoRepository.save(salvoObject);
+
+        return new ResponseEntity<>(makeMap("created", "Salvo added successfully"), HttpStatus.CREATED);
+    }
+
     @RequestMapping(value = "/games/players/{gpid}/ships", method = RequestMethod.POST)
     public ResponseEntity<Map<String, Object>> placeShips(@PathVariable long gpid, @RequestBody List<Ship> ships, Authentication auth) {
         Player currentUser = playerRepository.findByUserName(auth.getName());
@@ -154,7 +184,6 @@ public class SalvoController {
                 response = current;
             }
         }
-
         return response;
     }
 
