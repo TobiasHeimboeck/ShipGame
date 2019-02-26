@@ -10,7 +10,6 @@
     <div id="main">
         <button @click="goBack">Back</button>
         <h5 id="gameInfo"></h5>
-
         <div class="content">
             <table id="player">
                 <tbody>
@@ -24,7 +23,6 @@
                     </tr>
                 </tbody>
             </table>
-
             <table id="enemy">
                 <tbody>
                     <tr>
@@ -38,12 +36,9 @@
                 </tbody>
             </table>
         </div>
-
         <div class="submitContainer">
-
             <button class="submitShips" onclick="main.done()">Submit Ships</button>
             <button class="submitSalvos" onclick="main.doneSalvos()">Submit Salvos</button>
-
             <table class="add" id="showShips">
                 <tbody>
                     <tr>
@@ -80,7 +75,6 @@
                     </tr>
                 </tbody>
             </table>
-
             <div class="onoffswitch">
                 <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch">
                 <label class="onoffswitch-label" for="myonoffswitch">
@@ -88,19 +82,8 @@
                     <span class="onoffswitch-switch"></span>
                 </label>
             </div>
-
-            <table class="add2" id="showShips">
-                <tbody>
-                    <tr>
-                        <th> Salvos: (<a>{{ shots }}</a>) </th>
-                    </tr>
-                </tbody>
-            </table>
-
         </div>
-
     </div>
-
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <script src="game.js"></script>
 </body>

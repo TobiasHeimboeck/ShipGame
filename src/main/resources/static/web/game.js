@@ -49,6 +49,9 @@ var main = new Vue({
                 for (let a = 0; a < this.gameData.ships.length; a++) {
                     for (let b = 0; b < this.gameData.ships[a].locations.length; b++) {
                         let currentLoc = this.gameData.ships[a].locations[b];
+
+
+
                         document.getElementById(currentLoc).style.backgroundColor = "cyan";
                         document.getElementById(currentLoc).setAttribute("hasShip", true);
                     }
