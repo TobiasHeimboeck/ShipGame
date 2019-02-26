@@ -39,64 +39,65 @@
             </table>
         </div>
 
-        <table class="add" id="showShips">
-            <tbody>
-                <tr>
-                    <th><button data-type="carrier" onclick="main.getValue(this, 'carrier')" data-length="5">Select</button> (<a id="carrier">1</a>) Aircraft Carrier </th>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <th><button data-type="battleship" onclick="main.getValue(this, 'battleship')" data-length="4">Select</button> (<a id="battleship">1</a>) Battleship</th>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <th><button data-type="submarine" onclick="main.getValue(this, 'submarine')" data-length="3">Select</button> (<a id="submarine">1</a>) Submarine</th>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <th><button data-type="destroyer" onclick="main.getValue(this, 'destroyer')" data-length="3">Select</button> (<a id="destroyer">1</a>) Destroyer</th>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <th><button data-type="patrolboat" onclick="main.getValue(this, 'patrolboat')" data-length="2">Select</button> (<a id="patrolboat">1</a>) Patrol Boat</th>
-                    <td></td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <th>Finish: <button onclick="main.done()">Done</button></th>
-                </tr>
-            </tbody>
-        </table>
+        <div class="submitContainer">
 
-        <div class="onoffswitch">
-            <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch">
-            <label class="onoffswitch-label" for="myonoffswitch">
-                <span class="onoffswitch-inner"></span>
-                <span class="onoffswitch-switch"></span>
-            </label>
+            <button class="submitShips" onclick="main.done()">Submit Ships</button>
+            <button class="submitSalvos" onclick="main.doneSalvos()">Submit Salvos</button>
+
+            <table class="add" id="showShips">
+                <tbody>
+                    <tr>
+                        <th><button data-type="carrier" onclick="main.getValue(this, 'carrier')" data-length="5">Select</button> (<a id="carrier">1</a>) Aircraft Carrier </th>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <th><button data-type="battleship" onclick="main.getValue(this, 'battleship')" data-length="4">Select</button> (<a id="battleship">1</a>) Battleship</th>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <th><button data-type="submarine" onclick="main.getValue(this, 'submarine')" data-length="3">Select</button> (<a id="submarine">1</a>) Submarine</th>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <th><button data-type="destroyer" onclick="main.getValue(this, 'destroyer')" data-length="3">Select</button> (<a id="destroyer">1</a>) Destroyer</th>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <th><button data-type="patrolboat" onclick="main.getValue(this, 'patrolboat')" data-length="2">Select</button> (<a id="patrolboat">1</a>) Patrol Boat</th>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="onoffswitch">
+                <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch">
+                <label class="onoffswitch-label" for="myonoffswitch">
+                    <span class="onoffswitch-inner"></span>
+                    <span class="onoffswitch-switch"></span>
+                </label>
+            </div>
+
+            <table class="add2" id="showShips">
+                <tbody>
+                    <tr>
+                        <th> Salvos: (<a>{{ shots }}</a>) </th>
+                    </tr>
+                </tbody>
+            </table>
+
         </div>
-
-        <table class="add2" id="showShips">
-            <tbody>
-                <tr>
-                    <th> Salvos: (<a>{{ shots }}</a>) </th>
-                </tr>
-                <tr>
-                    <th>Finish: <button id="salvoButton" onclick="main.doneSalvos()">Done</button></th>
-                </tr>
-            </tbody>
-        </table>
 
     </div>
 

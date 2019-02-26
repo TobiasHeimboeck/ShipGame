@@ -25,30 +25,12 @@ a {
     float: right;
 }
 
-#showShips {
-    background-color: lightgray;
-    border: 5px solid darkgray;
-}
+/* #showShips {
+
+} */
 
 #showShips th {
     float: left;
-}
-
-#showShips button {
-    border: 0;
-    border: 2px solid black;
-    background-color: gray;
-    color: white;
-}
-
-#showShips button:hover {
-    background-color: lightgray;
-    border: 2px solid gray;
-}
-
-#showShips button:active {
-    background-color: lightgreen;
-    border: 2px solid green;
 }
 
 #showShips td {
@@ -78,11 +60,11 @@ a {
 
 .add {
     margin-left: 15px;
-    margin-top: 850px;
+    /* margin-top: 850px; */
 }
 
 .add2 {
-    margin-top: -160px;
+    /* margin-top: -160px; */
     margin-left: 400px;
 }
 
@@ -95,6 +77,31 @@ a {
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
+}
+
+.submitContainer {
+    width: 100%;
+    height: 200px;
+    margin-top: 830px;
+}
+
+.submitShips {
+    background-color: green;
+    color: white;
+    margin-left: 15px;
+    height: 40px;
+    width: 39%;
+    margin-bottom: 10px;
+}
+
+.submitSalvos {
+    background-color: green;
+    color: white;
+    height: 40px;
+    width: 39%;
+    margin-bottom: 10px;
+    font-weight: bold;
+    float: right;
 }
 
 .onoffswitch-checkbox {

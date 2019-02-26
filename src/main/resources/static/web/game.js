@@ -49,7 +49,6 @@ var main = new Vue({
                 for (let a = 0; a < this.gameData.ships.length; a++) {
                     for (let b = 0; b < this.gameData.ships[a].locations.length; b++) {
                         let currentLoc = this.gameData.ships[a].locations[b];
-                        console.log(currentLoc);
                         document.getElementById(currentLoc).style.backgroundColor = "cyan";
                         document.getElementById(currentLoc).setAttribute("hasShip", true);
                     }
@@ -59,6 +58,7 @@ var main = new Vue({
                     for (let d = 0; d < this.gameData.salvoes[c].locations.length; d++) {
                         let currentSalvo = this.gameData.salvoes[c];
                         document.getElementById(currentSalvo.locations[d]).style.backgroundColor = "orange";
+                        document.getElementById(currentSalvo.locations[d]).setAttribute("cell-hitted", true);
                         document.getElementById(currentSalvo.locations[d]).innerHTML = currentSalvo.turn;
                         document.getElementById(currentSalvo.locations[d]).style.textAlign = "center";
                     }
@@ -209,14 +209,14 @@ document.getElementById("enemy").addEventListener("click", function () {
                 }, 100);
             }
         } else {
-            if(!document.getElementById(id).hasAttribute("cell-hitted")) {
+            if (!document.getElementById(id).hasAttribute("cell-hitted")) {
                 document.getElementById(id).style.backgroundColor = "red";
                 setTimeout(function () {
                     document.getElementById(id).style.backgroundColor = "white";
                 }, 100);
             } else {
                 document.getElementById(id).style.backgroundColor = "red";
-                    setTimeout(function () {
+                setTimeout(function () {
                     document.getElementById(id).style.backgroundColor = "orange";
                 }, 100);
             }

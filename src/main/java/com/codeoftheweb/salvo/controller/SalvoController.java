@@ -56,7 +56,7 @@ public class SalvoController {
         Player player = new Player(username, password);
 
         playerRepository.save(player);
-        return new ResponseEntity<>(getPlayersDTO("id", player.getId()), HttpStatus.CREATED);
+        return new ResponseEntity<>(getPlayersDTO(player.getId()), HttpStatus.CREATED);
     }
 
     @RequestMapping(value = "/games", method = RequestMethod.POST)
@@ -216,9 +216,9 @@ public class SalvoController {
         return dto;
     }
 
-    private Map<String, Object> getPlayersDTO(String key, Object value) {
+    private Map<String, Object> getPlayersDTO(Object value) {
         final Map<String, Object> dto = new HashMap<>();
-        dto.put(key, value);
+        dto.put("id", value);
         return dto;
     }
 
