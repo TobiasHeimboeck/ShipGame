@@ -181,14 +181,7 @@ var main = new Vue({
             main.placeShips(main.ships);
         },
         doneSalvos() {
-            var salvos = [];
-
-            salvos.push({
-                turn: 1,
-                locations: main.salvoLocations
-            });
-
-            main.placeSalvos(salvos);
+            main.placeSalvos(main.salvoLocations);
         },
         goBack() {
             location.href = "games.html";
@@ -207,7 +200,7 @@ document.getElementById("enemy").addEventListener("click", function () {
                 document.getElementById(id).style.backgroundColor = "orange";
                 document.getElementById(id).setAttribute("cell-hitted", true);
                 document.getElementById(id).style.textAlign = "center";
-                document.getElementById(id).innerHTML = "1";
+                document.getElementById(id).innerHTML = "?";
                 main.salvoLocations.push(id);
             } else {
                 document.getElementById(id).style.backgroundColor = "red";
