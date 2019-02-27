@@ -9,6 +9,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
+import java.util.function.Consumer;
 
 import static java.util.stream.Collectors.toList;
 
@@ -31,18 +32,23 @@ public class SalvoController {
     @Autowired
     private SalvoRepository salvoRepository;
 
+    //<editor-fold desc="getPlayers">
     @RequestMapping(value = "/scoreboard")
     public List<Object> getPlayers() {
         return playerRepository.findAll().stream().map(this::getScoreDTO).collect(toList());
     }
+    //</editor-fold>
 
+    //<editor-fold desc="getAll">
     @RequestMapping(value = "/games")
     public Map<String, Object> getAll() {
         Map<String, Object> dto = new HashMap<>();
         dto.put("games", gameRepository.findAll().stream().map(this::makeDTO).collect(toList()));
         return dto;
     }
+    //</editor-fold>
 
+    //<editor-fold desc="registerPlayer">
     @RequestMapping(value = "/players", method = RequestMethod.POST)
     public ResponseEntity<Object> registerPlayer(@RequestParam String username, String password) {
         if (username.isEmpty())
@@ -56,7 +62,9 @@ public class SalvoController {
         playerRepository.save(player);
         return new ResponseEntity<>(getPlayersDTO(player.getId()), HttpStatus.CREATED);
     }
+    //</editor-fold>
 
+    //<editor-fold desc="createGame">
     @RequestMapping(value = "/games", method = RequestMethod.POST)
     public ResponseEntity<Map<String, Object>> createGame(Authentication auth) {
         Player player = playerRepository.findByUserName(auth.getName());
@@ -71,7 +79,9 @@ public class SalvoController {
             return new ResponseEntity<>(createResponse("gpid", gamePlayer.getId()), HttpStatus.CREATED);
         }
     }
+    //</editor-fold>
 
+    //<editor-fold desc="joinGame">
     @RequestMapping(value = "/game/{id}/players")
     public ResponseEntity<Map<String, Object>> joinGame(@PathVariable long id, Authentication auth) {
         Player currentUser = playerRepository.findByUserName(auth.getName());
@@ -92,7 +102,9 @@ public class SalvoController {
             }
         }
     }
+    //</editor-fold>
 
+    //<editor-fold desc="getGame">
     @RequestMapping(value = "/game_view/{id}")
     public ResponseEntity<Map<String, Object>> getGame(@PathVariable long id, Authentication auth) {
         GamePlayer gamePlayer = gamePlayerRepository.getOne(id);
@@ -100,9 +112,7 @@ public class SalvoController {
             Map<String, Object> gameView = new HashMap<>();
             gameView.put("games", getGameDTO(gamePlayer.getGame()));
             gameView.put("ships", gamePlayer.getShips().stream().map(this::getShipDTO).collect(toList()));
-
-            // gameView.put("enemy_ship_locations", getEnemyShips(gamePlayer, auth));
-
+            gameView.put("infos", getInformations(gamePlayer, auth));
             gameView.put("salvoes", gamePlayer.getSalvos().stream().map(this::getSalvoesDTO)
                     .collect(toList()));
 
@@ -116,7 +126,9 @@ public class SalvoController {
             return new ResponseEntity<>(createResponse("error", "un"), HttpStatus.UNAUTHORIZED);
         }
     }
+    //</editor-fold>
 
+    //<editor-fold desc="placeSalvo">
     @RequestMapping(path = "/games/players/{gamePlayerId}/salvos", method = RequestMethod.POST)
     public ResponseEntity<Object> placeSalvo(@PathVariable long gamePlayerId, @RequestBody List<String> salvo, Authentication auth) {
         Player currentUser = playerRepository.findByUserName(auth.getName());
@@ -142,7 +154,9 @@ public class SalvoController {
 
         return new ResponseEntity<>(createResponse("created", "Salvo added successfully"), HttpStatus.CREATED);
     }
+    //</editor-fold>
 
+    //<editor-fold desc="placeShips">
     @RequestMapping(value = "/games/players/{gpid}/ships", method = RequestMethod.POST)
     public ResponseEntity<Map<String, Object>> placeShips(@PathVariable long gpid, @RequestBody List<Ship> ships, Authentication auth) {
         Player currentUser = playerRepository.findByUserName(auth.getName());
@@ -172,31 +186,39 @@ public class SalvoController {
 
         return new ResponseEntity<>(createResponse("created", "Ships placed successfully"), HttpStatus.CREATED);
     }
+    //</editor-fold>
 
+    //<editor-fold desc="getInformations">
     private Map<String, Object> getInformations(GamePlayer gamePlayer, Authentication auth) {
         Map<String, Object> informations = new HashMap<>();
         List<Salvo> salvos = gamePlayer.getSalvos().stream()
                 .sorted(Comparator.comparingInt(Salvo::getTurn))
                 .collect(toList());
 
-        Set<Ship> enemyShips = getEnemy(gamePlayer, auth).getShips();
-        List<Object> turns = new ArrayList<>();
-        Map<Ship, Integer> remainingShipLocations = new HashMap<>();
+        this.ifEnemyIsPresent(gamePlayer, auth, enemy -> {
 
-        for (Salvo current : salvos) {
-            Map<String, Object> turn = new HashMap<>();
+            Set<Ship> enemyShips = enemy.getShips();
+            List<Object> turns = new ArrayList<>();
+            Map<Ship, Integer> remainingShipLocations = new HashMap<>();
 
-            turn.put("turn", current.getTurn());
-            turn.put("hit", getHits(enemyShips, current));
-            turn.put("sunk", getSunk(enemyShips, current, remainingShipLocations));
-            turn.put("left", getRemainingLocationsSize(remainingShipLocations));
+            for (Salvo current : salvos) {
+                Map<String, Object> turn = new HashMap<>();
+                turn.put("turn", current.getTurn());
+                turn.put("hit", getHits(enemyShips, current));
+                turn.put("sunk", getSunk(enemyShips, current, remainingShipLocations));
+                turn.put("left", getRemainingLocationsSize(remainingShipLocations));
+                turns.add(turn);
+            }
 
-            turns.add(turn);
-        }
+            informations.put("gpid", gamePlayer.getId());
+            informations.put("shipInfos", turns);
+        });
 
         return informations;
     }
+    //</editor-fold>
 
+    //<editor-fold desc="getSunk">
     private List<String> getSunk(Set<Ship> ships, Salvo salvo, Map<Ship, Integer> remainingLocations) {
         List<String> sunkenShips = new ArrayList<>();
         for (Ship enemyShip : ships) {
@@ -216,7 +238,9 @@ public class SalvoController {
         }
         return sunkenShips;
     }
+    //</editor-fold>
 
+    //<editor-fold desc="getHits">
     private List<String> getHits(Set<Ship> ships, Salvo salvo) {
         List<String> response = new ArrayList<>();
         for (Ship currentShip : ships) {
@@ -230,7 +254,9 @@ public class SalvoController {
         }
         return response;
     }
+    //</editor-fold>
 
+    //<editor-fold desc="getRemainingLocationsSize">
     private int getRemainingLocationsSize(Map<Ship, Integer> remainingLocations) {
         int left = 0;
         for (int current : remainingLocations.values()) {
@@ -239,7 +265,9 @@ public class SalvoController {
         }
         return left;
     }
+    //</editor-fold>
 
+    //<editor-fold desc="getEnemy">
     private GamePlayer getEnemy(GamePlayer player, Authentication auth) {
         Player currentPlayer = playerRepository.findByUserName(auth.getName());
         GamePlayer response = null;
@@ -250,13 +278,17 @@ public class SalvoController {
         }
         return response;
     }
+    //</editor-fold>
 
+    //<editor-fold desc="createResponse">
     private Map<String, Object> createResponse(String key, Object value) {
         Map<String, Object> map = new HashMap<>();
         map.put(key, value);
         return map;
     }
+    //</editor-fold>
 
+    //<editor-fold desc="makeDTO">
     private Map<String, Object> makeDTO(Game game) {
         Map<String, Object> dto = new HashMap<>();
         dto.put("id", game.getId());
@@ -265,7 +297,9 @@ public class SalvoController {
                 .collect(toList()));
         return dto;
     }
+    //</editor-fold>
 
+    //<editor-fold desc="getGPDTO">
     private Map<String, Object> getGPDTO(GamePlayer gamePlayer) {
         Map<String, Object> dto = new HashMap<>();
         dto.put("gpid", gamePlayer.getId());
@@ -273,7 +307,9 @@ public class SalvoController {
         dto.put("name", gamePlayer.getPlayer().getUserName());
         return dto;
     }
+    //</editor-fold>
 
+    //<editor-fold desc="getScoreDTO">
     private Map<String, Object> getScoreDTO(Player player) {
         Map<String, Object> dto = new HashMap<>();
         dto.put("player", player.getUserName());
@@ -283,14 +319,17 @@ public class SalvoController {
         dto.put("ties", player.getScores().stream().filter(score -> score.getScore() == 0.5).count());
         return dto;
     }
+    //</editor-fold>
 
+    //<editor-fold desc="getPlayersDTO">
     private Map<String, Object> getPlayersDTO(Object value) {
         Map<String, Object> dto = new HashMap<>();
         dto.put("id", value);
         return dto;
     }
+    //</editor-fold>
 
-
+    //<editor-fold desc="getSalvoesDTO">
     private Map<String, Object> getSalvoesDTO(Salvo salvo) {
         Map<String, Object> gameView = new HashMap<>();
         gameView.put("turn", salvo.getTurn());
@@ -298,7 +337,9 @@ public class SalvoController {
         gameView.put("locations", salvo.getLocations());
         return gameView;
     }
+    //</editor-fold>
 
+    //<editor-fold desc="getGameDTO">
     private Map<String, Object> getGameDTO(Game game) {
         Map<String, Object> dto = new HashMap<>();
         dto.put("id", game.getId());
@@ -307,25 +348,40 @@ public class SalvoController {
                 .collect(toList()));
         return dto;
     }
+    //</editor-fold>
 
+    //<editor-fold desc="getShipDTO">
     private Map<String, Object> getShipDTO(Ship ship) {
         Map<String, Object> dto = new HashMap<>();
         dto.put("type", ship.getType());
         dto.put("locations", ship.getLocations());
         return dto;
     }
+    //</editor-fold>
 
+    //<editor-fold desc="getGamePlayerDTO">
     private Map<String, Object> getGamePlayerDTO(GamePlayer gamePlayer) {
         Map<String, Object> dto = new HashMap<>();
         dto.put("id", gamePlayer.getId());
         dto.put("player", getPlayerDTO(gamePlayer.getPlayer()));
         return dto;
     }
+    //</editor-fold>
 
+    //<editor-fold desc="getPlayerDTO">
     private Map<String, Object> getPlayerDTO(Player player) {
         Map<String, Object> dto = new HashMap<>();
         dto.put("id", player.getId());
         dto.put("email", player.getUserName());
         return dto;
     }
+    //</editor-fold>
+
+    //<editor-fold desc="ifEnemyIsPresent">
+    private void ifEnemyIsPresent(GamePlayer gamePlayer, Authentication auth, Consumer<GamePlayer> action) {
+        if (this.getEnemy(gamePlayer, auth) != null) {
+            action.accept(this.getEnemy(gamePlayer, auth));
+        }
+    }
+    //</editor-fold>
 }
