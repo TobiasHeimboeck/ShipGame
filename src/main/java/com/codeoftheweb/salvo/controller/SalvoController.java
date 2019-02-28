@@ -205,26 +205,23 @@ public class SalvoController {
     //<editor-fold desc="getSunkenShips">
     private List<String> getSunkenShips(GamePlayer gamePlayer, Authentication auth) {
         final List<String> response = new ArrayList<>();
-        final List<String> locs = new ArrayList<>();
 
         for (Ship ship : gamePlayer.getShips()) {
-            for (String location : ship.getLocations()) {
-                String newLocation = "E" + this.removeFirstChar(location);
-                locs.add(newLocation);
-            }
-        }
+            ship.getLocations().forEach(current -> {
+                String newLoc = "P" + this.removeFirstChar(current);
 
-        if (this.getHits(gamePlayer, auth).equals(locs)) {
-            for (String current : locs) {
-                if (!response.contains(current)) {
-                    response.add(current);
+                for (String hit : this.getHits(gamePlayer, auth)) {
+                    String newHit = "P" + this.removeFirstChar(hit);
+                    System.out.println("NewLoc: " + newLoc);
+                    System.out.println("Hit: " + newHit);
+                    if (newLoc.equals(newHit) && ship.getLocations().contains(newLoc)) {
+                        response.add("E" + this.removeFirstChar(newHit));
+                    }
                 }
-            }
+
+            });
         }
-
-        System.out.println(this.getHits(gamePlayer, auth).equals(locs));
         System.out.println(response);
-
         return response;
     }
     //</editor-fold>
@@ -269,9 +266,7 @@ public class SalvoController {
     private List<String> getShipLocations(GamePlayer gamePlayer) {
         final List<String> response = new ArrayList<>();
         for (Ship ship : gamePlayer.getShips()) {
-            for (String location : ship.getLocations()) {
-                response.add(location);
-            }
+            response.addAll(ship.getLocations());
         }
         return response;
     }
