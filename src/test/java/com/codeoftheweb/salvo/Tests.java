@@ -7,7 +7,7 @@ import java.util.function.Consumer;
 
 public class Tests {
 
-    public static void main(String[] args) {
+    public static void main_(String[] args) {
         String index = MessageFormat.format("www.{0}.com:{1}", "globalinc", "8080");
         String admin = MessageFormat.format(index + "/{0}", "admin");
         String router = MessageFormat.format(admin + "?gpid={0}", new Random().nextInt(100));

@@ -60,10 +60,29 @@ var main = new Vue({
                 for (let c = 0; c < this.gameData.salvoes.length; c++) {
                     for (let d = 0; d < this.gameData.salvoes[c].locations.length; d++) {
                         let currentSalvo = this.gameData.salvoes[c];
-                        document.getElementById(currentSalvo.locations[d]).style.backgroundColor = "orange";
-                        document.getElementById(currentSalvo.locations[d]).setAttribute("cell-hitted", true);
-                        document.getElementById(currentSalvo.locations[d]).innerHTML = currentSalvo.turn;
-                        document.getElementById(currentSalvo.locations[d]).style.textAlign = "center";
+
+                        for (var e = 0; e < this.gameData.infos.player_hitted_ships.length; e++) {
+
+                            for (var f = 0; f < currentSalvo.locations.length; f++) {
+
+                                if (this.gameData.infos.player_hitted_ships[e] === currentSalvo.locations[f]) {
+
+                                    document.getElementById(currentSalvo.locations[f]).style.backgroundColor = "red";
+                                    document.getElementById(currentSalvo.locations[f]).setAttribute("cell-hitted", true);
+                                    document.getElementById(currentSalvo.locations[f]).innerHTML = currentSalvo.turn;
+                                    document.getElementById(currentSalvo.locations[f]).style.textAlign = "center";
+
+                                } else {
+
+                                    document.getElementById(currentSalvo.locations[d]).style.backgroundColor = "orange";
+                                    document.getElementById(currentSalvo.locations[d]).setAttribute("cell-hitted", true);
+                                    document.getElementById(currentSalvo.locations[d]).innerHTML = currentSalvo.turn;
+                                    document.getElementById(currentSalvo.locations[d]).style.textAlign = "center";
+
+                                }
+
+                            }
+                        }
                     }
                 }
 

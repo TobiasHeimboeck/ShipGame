@@ -8,7 +8,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 import static java.util.stream.Collectors.toList;
@@ -188,68 +191,86 @@ public class SalvoController {
     }
     //</editor-fold>
 
-    //<editor-fold desc="getInformations">
     private Map<String, Object> getInformations(GamePlayer gamePlayer, Authentication auth) {
-        Map<String, Object> informations = new HashMap<>();
-        List<Salvo> salvos = gamePlayer.getSalvos().stream()
-                .sorted(Comparator.comparingInt(Salvo::getTurn))
-                .collect(toList());
+        final Map<String, Object> infos = new HashMap<>();
 
         this.ifEnemyIsPresent(gamePlayer, auth, enemy -> {
-
-            Set<Ship> enemyShips = enemy.getShips();
-            List<Object> turns = new ArrayList<>();
-            Map<Ship, Integer> remainingShipLocations = new HashMap<>();
-
-            for (Salvo current : salvos) {
-                Map<String, Object> turn = new HashMap<>();
-                turn.put("turn", current.getTurn());
-                turn.put("hit", getHits(enemyShips, current));
-                turn.put("sunk", getSunk(enemyShips, current, remainingShipLocations));
-                turn.put("left", getRemainingLocationsSize(remainingShipLocations));
-                turns.add(turn);
-            }
-
-            informations.put("gpid", gamePlayer.getId());
-            informations.put("shipInfos", turns);
+            infos.put("player_hitted_ships", this.getHits(gamePlayer, auth));
+            infos.put("sunken_ships", this.getSunkenShips(gamePlayer, auth));
         });
 
-        return informations;
+        return infos;
     }
-    //</editor-fold>
 
-    //<editor-fold desc="getSunk">
-    private List<String> getSunk(Set<Ship> ships, Salvo salvo, Map<Ship, Integer> remainingLocations) {
-        List<String> sunkenShips = new ArrayList<>();
-        for (Ship enemyShip : ships) {
-            int shipSize = remainingLocations.get(enemyShip);
-            for (String shotLocation : salvo.getLocations()) {
-                for (String shipLocation : enemyShip.getLocations()) {
-                    if (shotLocation.equals(shipLocation)) {
-                        shipSize--;
-                        remainingLocations.put(enemyShip, shipSize);
-                        if (shipSize == 0) {
-                            String ship = enemyShip.getType();
-                            sunkenShips.add(ship);
-                        }
-                    }
+    //<editor-fold desc="getSunkenShips">
+    private List<String> getSunkenShips(GamePlayer gamePlayer, Authentication auth) {
+        final List<String> response = new ArrayList<>();
+        final List<String> locs = new ArrayList<>();
+
+        for (Ship ship : gamePlayer.getShips()) {
+            for (String location : ship.getLocations()) {
+                String newLocation = "E" + this.removeFirstChar(location);
+                locs.add(newLocation);
+            }
+        }
+
+        if (this.getHits(gamePlayer, auth).equals(locs)) {
+            for (String current : locs) {
+                if (!response.contains(current)) {
+                    response.add(current);
                 }
             }
         }
-        return sunkenShips;
+
+        System.out.println(this.getHits(gamePlayer, auth).equals(locs));
+        System.out.println(response);
+
+        return response;
     }
     //</editor-fold>
 
     //<editor-fold desc="getHits">
-    private List<String> getHits(Set<Ship> ships, Salvo salvo) {
-        List<String> response = new ArrayList<>();
-        for (Ship currentShip : ships) {
-            for (String currentSalvoLocation : salvo.getLocations()) {
-                for (String currentShipLocation : currentShip.getLocations()) {
-                    if (currentSalvoLocation.equals(currentShipLocation)) {
-                        response.add(currentSalvoLocation);
-                    }
+    private List<String> getHits(GamePlayer gamePlayer, Authentication auth) {
+        final List<String> response = new ArrayList<>();
+        final GamePlayer enemy = this.getEnemy(gamePlayer, auth);
+        final List<String> salvos = this.getSalvoLocations(gamePlayer);
+        final List<String> ships = this.getShipLocations(enemy);
+
+        for (String salvo : salvos) {
+            String s = removeFirstChar(salvo);
+            if (ships.contains("P" + s)) {
+                if (!response.contains("E" + s)) {
+                    response.add("E" + s);
                 }
+            }
+        }
+
+        return response;
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="removeFirstChar">
+    private String removeFirstChar(String s) {
+        return s.substring(1);
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="getSalvoLocations">
+    private List<String> getSalvoLocations(GamePlayer gamePlayer) {
+        final List<String> response = new ArrayList<>();
+        for (Salvo salvo : gamePlayer.getSalvos()) {
+            response.addAll(salvo.getLocations());
+        }
+        return response;
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="getShipLocations">
+    private List<String> getShipLocations(GamePlayer gamePlayer) {
+        final List<String> response = new ArrayList<>();
+        for (Ship ship : gamePlayer.getShips()) {
+            for (String location : ship.getLocations()) {
+                response.add(location);
             }
         }
         return response;
