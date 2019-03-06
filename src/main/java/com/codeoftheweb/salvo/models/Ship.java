@@ -33,35 +33,51 @@ public class Ship {
         this.locations = locations;
     }
 
+    //<editor-fold desc="getId">
     public long getId() {
         return id;
     }
+    //</editor-fold>
 
+    //<editor-fold desc="setId">
     public void setId(long id) {
         this.id = id;
     }
+    //</editor-fold>
 
+    //<editor-fold desc="getGamePlayer">
     public GamePlayer getGamePlayer() {
         return gamePlayer;
     }
+    //</editor-fold>
 
+    //<editor-fold desc="setGamePlayer">
     public void setGamePlayer(GamePlayer gamePlayer) {
         this.gamePlayer = gamePlayer;
     }
+    //</editor-fold>
 
+    //<editor-fold desc="getLocations">
     public List<String> getLocations() {
         return locations;
     }
+    //</editor-fold>
 
+    //<editor-fold desc="setLocations">
     public void setLocations(List<String> locations) {
         this.locations = locations;
     }
+    //</editor-fold>
 
+    //<editor-fold desc="getType">
     public String getType() {
         return type;
     }
+    //</editor-fold>
 
+    //<editor-fold desc="setType">
     public void setType(String type) {
         this.type = type;
     }
+    //</editor-fold>
 }

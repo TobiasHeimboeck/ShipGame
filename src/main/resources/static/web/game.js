@@ -49,9 +49,6 @@ var main = new Vue({
                 for (let a = 0; a < this.gameData.ships.length; a++) {
                     for (let b = 0; b < this.gameData.ships[a].locations.length; b++) {
                         let currentLoc = this.gameData.ships[a].locations[b];
-
-
-
                         document.getElementById(currentLoc).style.backgroundColor = "cyan";
                         document.getElementById(currentLoc).setAttribute("hasShip", true);
                     }
@@ -67,7 +64,7 @@ var main = new Vue({
 
                                 if (this.gameData.infos.player_hitted_ships[e] === currentSalvo.locations[f]) {
 
-                                    document.getElementById(currentSalvo.locations[f]).style.backgroundColor = "red";
+                                    document.getElementById(currentSalvo.locations[f]).style.backgroundColor = "yellow";
                                     document.getElementById(currentSalvo.locations[f]).setAttribute("cell-hitted", true);
                                     document.getElementById(currentSalvo.locations[f]).innerHTML = currentSalvo.turn;
                                     document.getElementById(currentSalvo.locations[f]).style.textAlign = "center";
@@ -80,7 +77,6 @@ var main = new Vue({
                                     document.getElementById(currentSalvo.locations[d]).style.textAlign = "center";
 
                                 }
-
                             }
                         }
                     }
@@ -105,6 +101,7 @@ var main = new Vue({
                         }
                     }
                 }
+
             }).catch(function (error) {
                 console.log(error);
             })

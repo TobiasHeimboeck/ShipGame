@@ -29,32 +29,46 @@ public class Game {
         this.scores = new HashSet<>();
     }
 
+    //<editor-fold desc="addGamePlayer">
     public void addGamePlayer(GamePlayer player) {
         player.setGame(this);
         this.gamePlayers.add(player);
     }
+    //</editor-fold>
 
+    //<editor-fold desc="getGamePlayers">
     public Set<GamePlayer> getGamePlayers() {
         return gamePlayers;
     }
+    //</editor-fold>
 
+    //<editor-fold desc="getId">
     public long getId() {
         return this.id;
     }
+    //</editor-fold>
 
+    //<editor-fold desc="setId">
     public void setId(long id) {
         this.id = id;
     }
+    //</editor-fold>
 
+    //<editor-fold desc="getCreationDate">
     public String getCreationDate() {
         return this.creationDate;
     }
+    //</editor-fold>
 
+    //<editor-fold desc="setCreationDate">
     public void setCreationDate(String creationDate) {
         this.creationDate = creationDate;
     }
+    //</editor-fold>
 
+    //<editor-fold desc="getScores">
     public Set<Score> getScores() {
         return scores;
     }
+    //</editor-fold>
 }

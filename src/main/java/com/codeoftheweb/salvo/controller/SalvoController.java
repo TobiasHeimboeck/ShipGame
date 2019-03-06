@@ -2,16 +2,14 @@ package com.codeoftheweb.salvo.controller;
 
 import com.codeoftheweb.salvo.models.*;
 import com.codeoftheweb.salvo.repository.*;
+import com.codeoftheweb.salvo.state.GameStateManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Consumer;
 
 import static java.util.stream.Collectors.toList;
@@ -34,6 +32,8 @@ public class SalvoController {
 
     @Autowired
     private SalvoRepository salvoRepository;
+
+    private GameStateManager gameStateManager = new GameStateManager();
 
     //<editor-fold desc="getPlayers">
     @RequestMapping(value = "/scoreboard")
@@ -191,37 +191,55 @@ public class SalvoController {
     }
     //</editor-fold>
 
+    //<editor-fold desc="getInformations">
     private Map<String, Object> getInformations(GamePlayer gamePlayer, Authentication auth) {
         final Map<String, Object> infos = new HashMap<>();
+        final Map<Ship, Integer> remainingShipLocations = new HashMap<>();
+
+        final List<Salvo> salvos = gamePlayer.getSalvos().stream()
+                .sorted(Comparator.comparingInt(Salvo::getTurn))
+                .collect(toList());
 
         this.ifEnemyIsPresent(gamePlayer, auth, enemy -> {
+
+            Set<Ship> enemyShips = enemy.getShips();
+
+            for (Ship ship : enemyShips) {
+                remainingShipLocations.put(ship, ship.getLocations().size());
+            }
+
             infos.put("player_hitted_ships", this.getHits(gamePlayer, auth));
-            infos.put("sunken_ships", this.getSunkenShips(gamePlayer, auth));
+
+            for (Salvo salvo : salvos) {
+                System.out.println(this.getSunk(enemyShips, salvo, remainingShipLocations));
+                infos.put("sunken_ships", this.getSunk(enemyShips, salvo, remainingShipLocations));
+            }
         });
 
         return infos;
     }
+    //</editor-fold>
 
-    //<editor-fold desc="getSunkenShips">
-    private List<String> getSunkenShips(GamePlayer gamePlayer, Authentication auth) {
+    //<editor-fold desc="getSunk">
+    private List<String> getSunk(Set<Ship> ships, Salvo salvo, Map<Ship, Integer> remainingShipLocations) {
         final List<String> response = new ArrayList<>();
+        for (Ship current : ships) {
 
-        for (Ship ship : gamePlayer.getShips()) {
-            ship.getLocations().forEach(current -> {
-                String newLoc = "P" + this.removeFirstChar(current);
+            int size = remainingShipLocations.get(current);
 
-                for (String hit : this.getHits(gamePlayer, auth)) {
-                    String newHit = "P" + this.removeFirstChar(hit);
-                    System.out.println("NewLoc: " + newLoc);
-                    System.out.println("Hit: " + newHit);
-                    if (newLoc.equals(newHit) && ship.getLocations().contains(newLoc)) {
-                        response.add("E" + this.removeFirstChar(newHit));
+            for (String sLocation : salvo.getLocations()) {
+                String shotLocation = "P" + this.removeFirstChar(sLocation);
+                for (String shipLocation : current.getLocations()) {
+                    if (shotLocation.equals(shipLocation)) {
+                        size--;
+
+                        if (size == 0) {
+                            response.add(current.getType());
+                        }
                     }
                 }
-
-            });
+            }
         }
-        System.out.println(response);
         return response;
     }
     //</editor-fold>
@@ -269,17 +287,6 @@ public class SalvoController {
             response.addAll(ship.getLocations());
         }
         return response;
-    }
-    //</editor-fold>
-
-    //<editor-fold desc="getRemainingLocationsSize">
-    private int getRemainingLocationsSize(Map<Ship, Integer> remainingLocations) {
-        int left = 0;
-        for (int current : remainingLocations.values()) {
-            if (current != 0)
-                left++;
-        }
-        return left;
     }
     //</editor-fold>
 
@@ -390,6 +397,16 @@ public class SalvoController {
         dto.put("id", player.getId());
         dto.put("email", player.getUserName());
         return dto;
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="ifUserIsLoggedIn">
+    private void ifUserIsLoggedIn(GamePlayer gamePlayer, Authentication auth, Consumer<GamePlayer> action) {
+        if (gamePlayer.getPlayer() == playerRepository.findByUserName(auth.getName())) {
+            action.accept(gamePlayer);
+        } else {
+            throw new UnsupportedOperationException("Player is not logged in");
+        }
     }
     //</editor-fold>
 

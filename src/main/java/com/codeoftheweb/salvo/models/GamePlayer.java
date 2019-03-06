@@ -3,10 +3,7 @@ package com.codeoftheweb.salvo.models;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 public class GamePlayer {
@@ -41,57 +38,83 @@ public class GamePlayer {
         this.salvos = new ArrayList<>();
     }
 
+    //<editor-fold desc="addSalvo">
     public void addSalvo(Salvo salvo) {
         salvo.setPlayer(this);
         salvos.add(salvo);
     }
+    //</editor-fold>
 
+    //<editor-fold desc="addShip">
     public void addShip(Ship ship) {
         ship.setGamePlayer(this);
         ships.add(ship);
     }
+    //</editor-fold>
 
+    //<editor-fold desc="getScore">
     public Score getScore() {
         return this.player.getScore(this.game);
     }
+    //</editor-fold>
 
+    //<editor-fold desc="getId">
     public long getId() {
         return id;
     }
+    //</editor-fold>
 
+    //<editor-fold desc="setId">
     public void setId(long id) {
         this.id = id;
     }
+    //</editor-fold>
 
+    //<editor-fold desc="getPlayer">
     public Player getPlayer() {
         return player;
     }
+    //</editor-fold>
 
+    //<editor-fold desc="setPlayer">
     public void setPlayer(Player player) {
         this.player = player;
     }
+    //</editor-fold>
 
+    //<editor-fold desc="getGame">
     public Game getGame() {
         return game;
     }
+    //</editor-fold>
 
+    //<editor-fold desc="setGame">
     public void setGame(Game game) {
         this.game = game;
     }
+    //</editor-fold>
 
+    //<editor-fold desc="getShips">
     public Set<Ship> getShips() {
         return ships;
     }
+    //</editor-fold>
 
+    //<editor-fold desc="setShips">
     public void setShips(Set<Ship> ships) {
         this.ships = ships;
     }
+    //</editor-fold>
 
+    //<editor-fold desc="getSalvos">
     public List<Salvo> getSalvos() {
         return salvos;
     }
+    //</editor-fold>
 
+    //<editor-fold desc="setSalvos">
     public void setSalvos(List<Salvo> salvos) {
         this.salvos = salvos;
     }
+    //</editor-fold>
 }

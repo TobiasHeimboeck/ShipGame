@@ -25,10 +25,6 @@ a {
     float: right;
 }
 
-/* #showShips {
-
-} */
-
 #showShips th {
     float: left;
 }
@@ -60,11 +56,9 @@ a {
 
 .add {
     margin-left: 15px;
-    /* margin-top: 850px; */
 }
 
 .add2 {
-    /* margin-top: -160px; */
     margin-left: 400px;
 }
 

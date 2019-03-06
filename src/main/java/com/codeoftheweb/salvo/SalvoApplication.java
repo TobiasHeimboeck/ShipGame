@@ -43,7 +43,6 @@ public class SalvoApplication {
         return (args) -> {
 
             Player player = new Player("tobiasheimboeck@outlook.com", "gregbsej");
-
             Game game = new Game();
             GamePlayer gamePlayer = new GamePlayer(player, game);
             Ship ship = new Ship("battleship", gamePlayer, Arrays.asList("A1", "A2", "A3"));
@@ -107,6 +106,7 @@ public class SalvoApplication {
             salvoRepository.save(salvo3);
             salvoRepository.save(salvo4);
             salvoRepository.save(salvo5);
+
         };
     }
 }
@@ -117,8 +117,9 @@ class WebSecurityConfiguration extends GlobalAuthenticationConfigurerAdapter {
     @Autowired
     private PlayerRepository playerRepository;
 
+    //<editor-fold desc="init">
     @Override
-    public void init(AuthenticationManagerBuilder authBuilder) throws Exception {
+    public void init(final AuthenticationManagerBuilder authBuilder) throws Exception {
         authBuilder.userDetailsService(inputName -> {
             Player player = playerRepository.findByUserName(inputName);
             if (player != null) {
@@ -129,14 +130,16 @@ class WebSecurityConfiguration extends GlobalAuthenticationConfigurerAdapter {
             }
         });
     }
+    //</editor-fold>
 }
 
 @EnableWebSecurity
 @Configuration
 class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
+    //<editor-fold desc="configure">
     @Override
-    protected void configure(HttpSecurity http) throws Exception {
+    protected void configure(final HttpSecurity http) throws Exception {
         http.authorizeRequests()
                 .antMatchers("/web/**").permitAll()
                 .antMatchers("/api/login").permitAll()
@@ -159,11 +162,14 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.formLogin().failureHandler((req, res, exc) -> res.sendError(HttpServletResponse.SC_UNAUTHORIZED));
         http.logout().logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler());
     }
+    //</editor-fold>
 
-    private void clearAuthenticationAttributes(HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
+    //<editor-fold desc="clearAuthenticationAttributes">
+    private void clearAuthenticationAttributes(final HttpServletRequest request) {
+        final HttpSession session = request.getSession(false);
         if (session != null) {
             session.removeAttribute(WebAttributes.AUTHENTICATION_EXCEPTION);
         }
     }
+    //</editor-fold>
 }

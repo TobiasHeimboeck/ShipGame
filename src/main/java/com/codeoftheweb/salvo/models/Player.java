@@ -35,6 +35,7 @@ public class Player {
         this.scores = new HashSet<>();
     }
 
+    //<editor-fold desc="getScore">
     public Score getScore(Game game) {
         Score response = null;
         for(Score current : game.getScores()) {
@@ -44,41 +45,60 @@ public class Player {
         }
         return response;
     }
+    //</editor-fold>
 
+    //<editor-fold desc="addGamePlayer">
     public void addGamePlayer(GamePlayer player) {
         player.setPlayer(this);
         this.gamePlayers.add(player);
     }
+    //</editor-fold>
 
+    //<editor-fold desc="getGamePlayers">
     public Set<GamePlayer> getGamePlayers() {
         return gamePlayers;
     }
+    //</editor-fold>
 
+    //<editor-fold desc="getId">
     public long getId() {
         return this.id;
     }
+    //</editor-fold>
 
+    //<editor-fold desc="setId">
     public void setId(long id) {
         this.id = id;
     }
+    //</editor-fold>
 
+    //<editor-fold desc="getUserName">
     public String getUserName() {
         return this.userName;
     }
+    //</editor-fold>
 
+    //<editor-fold desc="setUserName">
     public void setUserName(String userName) {
         this.userName = userName;
     }
+    //</editor-fold>
 
+    //<editor-fold desc="getPassword">
     public String getPassword() {
         return password;
     }
+    //</editor-fold>
 
+    //<editor-fold desc="setPassword">
     public void setPassword(String password) {
         this.password = password;
     }
+    //</editor-fold>
 
+    //<editor-fold desc="getScores">
     public Set<Score> getScores() {
         return scores;
     }
+    //</editor-fold>
 }
