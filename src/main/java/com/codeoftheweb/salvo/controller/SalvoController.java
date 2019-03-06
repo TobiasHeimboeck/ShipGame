@@ -87,6 +87,7 @@ public class SalvoController {
     @RequestMapping(value = "/game/{id}/players")
     public ResponseEntity<Map<String, Object>> joinGame(@PathVariable long id, Authentication auth) {
         Player currentUser = playerRepository.findByUserName(auth.getName());
+
         if (currentUser == null) {
             return new ResponseEntity<>(createResponse("error", "Player is null"), HttpStatus.UNAUTHORIZED);
         } else {
@@ -114,7 +115,7 @@ public class SalvoController {
             Map<String, Object> gameView = new HashMap<>();
             gameView.put("games", getGameDTO(gamePlayer.getGame()));
             gameView.put("ships", gamePlayer.getShips().stream().map(this::getShipDTO).collect(toList()));
-            gameView.put("infos", getInformations(gamePlayer, auth));
+            gameView.put("infos", getGameStatistics(gamePlayer, auth));
             gameView.put("salvoes", gamePlayer.getSalvos().stream().map(this::getSalvoesDTO)
                     .collect(toList()));
 
@@ -191,7 +192,7 @@ public class SalvoController {
     //</editor-fold>
 
     //<editor-fold desc="getInformations">
-    private Map<String, Object> getInformations(GamePlayer gamePlayer, Authentication auth) {
+    private Map<String, Object> getGameStatistics(GamePlayer gamePlayer, Authentication auth) {
         final Map<String, Object> infos = new HashMap<>();
         final Map<Ship, Integer> remainingShipLocations = new HashMap<>();
 

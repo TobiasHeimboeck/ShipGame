@@ -6,6 +6,7 @@ public class GameStateManager {
 
     public GameStateManager() {
         this.currentState = GameState.PLACING_SHIPS;
+        updateGameState();
     }
 
     public void updateGameState() {

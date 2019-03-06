@@ -1,8 +1,8 @@
 package com.codeoftheweb.salvo.state;
 
-class InvalidGamestateException extends Exception {
+public class InvalidGamestateException extends Exception {
 
-    InvalidGamestateException(String message) {
+    public InvalidGamestateException(String message) {
         super(message);
     }
 }

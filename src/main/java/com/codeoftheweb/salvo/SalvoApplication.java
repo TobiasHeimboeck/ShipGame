@@ -106,7 +106,6 @@ public class SalvoApplication {
             salvoRepository.save(salvo3);
             salvoRepository.save(salvo4);
             salvoRepository.save(salvo5);
-
         };
     }
 }
