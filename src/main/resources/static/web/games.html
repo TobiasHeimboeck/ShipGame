@@ -11,13 +11,25 @@
 
 <div id="main">
 
+    <form v-if="!loggedIn">
+        <div class="box">
+            <h1 class="login-header">Salvo Game</h1>
+
+            <input id="username" type="email" name="email" class="email" />
+
+            <input id="password" type="password" name="password" class="email" />
+
+            <a @click="login" href="#"><div class="btn">Sign In</div></a>
+
+            <a @click="signup" href="#"><div id="btn2">Sign Up</div></a>
+
+        </div>
+
+    </form>
+
     <p id="status"></p>
 
     <div id="login_container">
-        <label v-if="!loggedIn">Name: <input id="username" type="text" name="username"></label>
-        <label v-if="!loggedIn">Password: <input id="password" type="password" name="password"></label>
-        <button v-if="!loggedIn" @click="login">Sign in</button>
-        <button v-if="!loggedIn" @click="signup">Sign up</button>
         <button v-if="loggedIn" @click="logout">Sign out</button>
         <button v-if="loggedIn" @click="createGame">New Game</button>
     </div>

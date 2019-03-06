@@ -24,8 +24,8 @@ public class GameStateManager {
                 break;
             default:
                 try {
-                    throw new ChangeGamestateException("This gamestate is not available.");
-                } catch (ChangeGamestateException e) {
+                    throw new InvalidGamestateException("This gamestate is not available.");
+                } catch (InvalidGamestateException e) {
                     e.printStackTrace();
                 }
                 break;

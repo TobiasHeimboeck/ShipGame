@@ -4,9 +4,7 @@ import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 public class Game {
@@ -67,7 +65,7 @@ public class Game {
     //</editor-fold>
 
     //<editor-fold desc="getScores">
-    public Set<Score> getScores() {
+    Set<Score> getScores() {
         return scores;
     }
     //</editor-fold>

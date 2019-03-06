@@ -11,9 +11,7 @@ import java.util.function.Consumer;
 @SpringBootTest
 public class Tests {
 
-    public static void main(String[] args) {
-
-    }
+    public static void main(String[] args) {}
 
     public static void main2(String[] args) throws InterruptedException {
         String prefix = "[Log] (12:30) ";

@@ -71,7 +71,6 @@ public class SalvoController {
     @RequestMapping(value = "/games", method = RequestMethod.POST)
     public ResponseEntity<Map<String, Object>> createGame(Authentication auth) {
         Player player = playerRepository.findByUserName(auth.getName());
-
         if (player == null) {
             return new ResponseEntity<>(createResponse("error", "Player is null"), HttpStatus.UNAUTHORIZED);
         } else {
