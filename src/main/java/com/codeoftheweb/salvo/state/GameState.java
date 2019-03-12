@@ -2,23 +2,22 @@ package com.codeoftheweb.salvo.state;
 
 public enum GameState {
 
-    PLACING_SHIPS(0),
-    WAIT_FOR_SALVO(1),
-    PLACING_SALVO(2),
-    WAIT_FOR_GAME_OVER(3),
-    GAME_OVER(4);
+    PLACING_SHIPS("Player place his ships"),
+    WAIT_FOR_OPPONENT_PLACE_SHIPS("Wait for the opponent to place his ships"),
+    PLACING_SALVO("Player place his salvos"),
+    WAIT_FOR_OPPONENT_PLACING_SALVO("Wait for the opponent to place his salvos");
 
-    private int id;
+    private String info;
 
-    GameState(int id) {
-        this.id = id;
+    GameState(String info) {
+        this.info = info;
     }
 
-    public int getId() {
-        return this.id;
+    public String getInfo() {
+        return info;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public static String getInfo(GameState gameState) {
+        return gameState.getInfo();
     }
 }

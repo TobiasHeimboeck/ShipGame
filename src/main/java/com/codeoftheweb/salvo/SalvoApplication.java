@@ -39,7 +39,6 @@ public class SalvoApplication {
                                       GamePlayerRepository gamePlayerRepository,
                                       ShipRepository shipRepository, SalvoRepository salvoRepository,
                                       ScoreRepository scoreRepository) {
-
         return (args) -> {
 
             Player player = new Player("tobiasheimboeck@outlook.com", "gregbsej");
@@ -116,27 +115,23 @@ class WebSecurityConfiguration extends GlobalAuthenticationConfigurerAdapter {
     @Autowired
     private PlayerRepository playerRepository;
 
-    //<editor-fold desc="init">
     @Override
     public void init(final AuthenticationManagerBuilder authBuilder) throws Exception {
         authBuilder.userDetailsService(inputName -> {
             Player player = playerRepository.findByUserName(inputName);
             if (player != null) {
-                return new User(player.getUserName(), player.getPassword(),
-                        AuthorityUtils.createAuthorityList("USER"));
+                return new User(player.getUserName(), player.getPassword(), AuthorityUtils.createAuthorityList("USER"));
             } else {
                 throw new UsernameNotFoundException("Unknown user: " + inputName);
             }
         });
     }
-    //</editor-fold>
 }
 
 @EnableWebSecurity
 @Configuration
 class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    //<editor-fold desc="configure">
     @Override
     protected void configure(final HttpSecurity http) throws Exception {
         http.authorizeRequests()
@@ -161,14 +156,11 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.formLogin().failureHandler((req, res, exc) -> res.sendError(HttpServletResponse.SC_UNAUTHORIZED));
         http.logout().logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler());
     }
-    //</editor-fold>
 
-    //<editor-fold desc="clearAuthenticationAttributes">
     private void clearAuthenticationAttributes(final HttpServletRequest request) {
         final HttpSession session = request.getSession(false);
         if (session != null) {
             session.removeAttribute(WebAttributes.AUTHENTICATION_EXCEPTION);
         }
     }
-    //</editor-fold>
 }
