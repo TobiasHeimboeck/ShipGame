@@ -4,6 +4,7 @@
 <head>
     <title>Game</title>
     <link rel="stylesheet" href="style.css">
+    <!-- <meta http-equiv="refresh" content="20"> -->
 </head>
 
 <body>
@@ -37,8 +38,9 @@
             </table>
         </div>
         <div class="submitContainer">
-            <button class="submitShips" onclick="main.done()">Submit Ships</button>
-            <button class="submitSalvos" onclick="main.doneSalvos()">Submit Salvos</button>
+            <button id="submit" class="submitShips" onclick="main.done()">Submit Ships</button>
+            <button id="submitEnemy" class="submitSalvos" onclick="main.doneSalvos()">Submit Salvos</button>
+
             <table class="add" id="showShips">
                 <tbody>
                     <tr>
@@ -75,7 +77,7 @@
                     </tr>
                 </tbody>
             </table>
-            <div class="onoffswitch">
+            <div id="switch" class="onoffswitch">
                 <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch">
                 <label class="onoffswitch-label" for="myonoffswitch">
                     <span class="onoffswitch-inner"></span>
@@ -85,6 +87,7 @@
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="game.js"></script>
 </body>
 

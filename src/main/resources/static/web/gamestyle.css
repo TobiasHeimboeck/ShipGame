@@ -3,16 +3,12 @@ body {
     background-image: url("background.jpg");
     margin: 0 auto 0 auto;
     width: 100%;
-    text-align: center;
     margin: 20px 0px 20px 0px;
-}
-
-body,
-html {
     background-position: center center;
     background-repeat: no-repeat;
     background-attachment: fixed;
     background-size: cover;
+    color: white;
 }
 
 a {
@@ -52,6 +48,7 @@ h1 {
     margin: 0 auto 0 auto;
     margin-top: 15%;
     padding: 0px 0px 70px 0px;
+    text-align: center;
 }
 
 .login-header {
@@ -91,6 +88,7 @@ h1 {
     margin-left: 16px;
     font-weight: 800;
     font-size: 0.8em;
+    border-radius: 100px;
 }
 
 .btn:hover {
@@ -109,8 +107,24 @@ h1 {
     margin-left: 10px;
     font-weight: 800;
     font-size: 0.8em;
+    border-radius: 100px;
 }
 
 #btn2:hover {
     background: #3594D2;
+}
+
+input[type="email"], input[type="password"] {
+    background-color: white;
+    border: none;
+    outline: none;
+    border-radius: 100px;
+}
+
+table {
+    background-color: gray;
+    border-radius: 5px;
+    margin-left: 10%;
+    margin-top: 5%;
+    color: lightgray;
 }

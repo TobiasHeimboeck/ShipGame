@@ -18,6 +18,17 @@ var main = new Vue({
     created() {
         this.loadPage("gp");
         this.startFetchingAsync("/api/game_view/" + this.getParameterByName("gp"));
+        setTimeout(function () {
+            if (this.gameData.ships.length == 0) {
+                document.getElementById("enemy").style.visibility = "hidden";
+                document.getElementById("submitEnemy").style.visibility = "hidden";
+            } else {
+                document.getElementById("enemy").style.visibility = "visible";
+                document.getElementById("submit").style.visibility = "hidden";
+                document.getElementById("showShips").style.visibility = "hidden";
+                document.getElementById("switch").style.visibility = "hidden";
+            }
+        }, 500);
     },
     methods: {
         startFetchingAsync(url) {
@@ -231,7 +242,7 @@ document.getElementById("enemy").addEventListener("click", function () {
             if (!document.getElementById(id).hasAttribute("cell-hitted")) {
                 document.getElementById(id).style.backgroundColor = "red";
                 setTimeout(function () {
-                    document.getElementById(id).style.backgroundColor = "white";
+                    document.getElementById(id).style.backgroundColor = "transparent";
                 }, 100);
             } else {
                 document.getElementById(id).style.backgroundColor = "red";
@@ -364,3 +375,18 @@ document.getElementById("player").addEventListener("click", function () {
         }
     }
 })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

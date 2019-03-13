@@ -5,7 +5,8 @@ public enum GameState {
     PLACING_SHIPS("Player place his ships"),
     WAIT_FOR_OPPONENT_PLACE_SHIPS("Wait for the opponent to place his ships"),
     PLACING_SALVO("Player place his salvos"),
-    WAIT_FOR_OPPONENT_PLACING_SALVO("Wait for the opponent to place his salvos");
+    WAIT_FOR_OPPONENT_PLACING_SALVO("Wait for the opponent to place his salvos"),
+    GAME_OVER("Game is now over");
 
     private String info;
 

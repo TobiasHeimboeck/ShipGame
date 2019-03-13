@@ -1,5 +1,6 @@
 package com.codeoftheweb.salvo;
 
+import com.codeoftheweb.salvo.controller.SalvoController;
 import com.codeoftheweb.salvo.models.*;
 import com.codeoftheweb.salvo.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,19 +33,31 @@ public class SalvoApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(SalvoApplication.class, args);
+        new Thread(() -> {
+            while (true) {
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                if (SalvoController.currentGameState != null) {
+                    System.out.println(SalvoController.currentGameState + " | " + SalvoController.currentGameState.getInfo());
+                } else {
+                    System.out.println("No GameState");
+                }
+            }
+        }).start();
     }
 
     @Bean
     public CommandLineRunner initData(PlayerRepository playerRepository, GameRepository gameRepository,
-                                      GamePlayerRepository gamePlayerRepository,
-                                      ShipRepository shipRepository, SalvoRepository salvoRepository,
+                                      GamePlayerRepository gamePlayerRepository, SalvoRepository salvoRepository,
                                       ScoreRepository scoreRepository) {
         return (args) -> {
 
             Player player = new Player("tobiasheimboeck@outlook.com", "gregbsej");
             Game game = new Game();
             GamePlayer gamePlayer = new GamePlayer(player, game);
-            Ship ship = new Ship("battleship", gamePlayer, Arrays.asList("A1", "A2", "A3"));
             Salvo salvo = new Salvo(gamePlayer, 1, Arrays.asList("C4", "C5"));
 
             Salvo test = new Salvo(gamePlayer, 2, Collections.singletonList("G6"));
@@ -52,7 +65,6 @@ public class SalvoApplication {
 
             Player player1 = new Player("test@mail.com", "ehgueuf");
             GamePlayer gamePlayer1 = new GamePlayer(player1, game);
-            Ship ship1 = new Ship("battleship", gamePlayer1, Arrays.asList("C2", "C3", "C4"));
             Salvo salvo1 = new Salvo(gamePlayer1, 1, Collections.singletonList("C3"));
 
             game.addGamePlayer(gamePlayer);
@@ -64,7 +76,6 @@ public class SalvoApplication {
             Player player2 = new Player("test@outlook.com", "ehgbehgeh");
 
             GamePlayer gamePlayer2 = new GamePlayer(player2, game1);
-            Ship ship2 = new Ship("carrier", gamePlayer2, Arrays.asList("A1", "A2", "D1", "C3"));
             Salvo salvo2 = new Salvo(gamePlayer2, 1, Arrays.asList("A1", "C1"));
 
             Salvo salvo3 = new Salvo(gamePlayer2, 2, Collections.singletonList("C6"));
@@ -72,7 +83,6 @@ public class SalvoApplication {
 
             Player player3 = new Player("t@outlook.com", "heug4d");
             GamePlayer gamePlayer3 = new GamePlayer(player3, game1);
-            Ship ship3 = new Ship("battleship", gamePlayer3, Arrays.asList("D1", "D2"));
             Salvo salvo5 = new Salvo(gamePlayer3, 1, Collections.singletonList("C1"));
 
             game1.addGamePlayer(gamePlayer2);
@@ -83,12 +93,10 @@ public class SalvoApplication {
             playerRepository.save(player);
             gameRepository.save(game);
             gamePlayerRepository.save(gamePlayer);
-            shipRepository.save(ship);
             salvoRepository.save(salvo);
             scoreRepository.save(score);
             playerRepository.save(player1);
             gamePlayerRepository.save(gamePlayer1);
-            shipRepository.save(ship1);
             salvoRepository.save(salvo1);
             salvoRepository.save(test);
             salvoRepository.save(test1);
@@ -96,12 +104,10 @@ public class SalvoApplication {
             playerRepository.save(player2);
             gameRepository.save(game1);
             gamePlayerRepository.save(gamePlayer2);
-            shipRepository.save(ship2);
             salvoRepository.save(salvo2);
             scoreRepository.save(score1);
             playerRepository.save(player3);
             gamePlayerRepository.save(gamePlayer3);
-            shipRepository.save(ship3);
             salvoRepository.save(salvo3);
             salvoRepository.save(salvo4);
             salvoRepository.save(salvo5);

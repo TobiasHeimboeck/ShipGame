@@ -6,10 +6,12 @@ import com.codeoftheweb.salvo.state.GameState;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
 import static java.util.stream.Collectors.toList;
@@ -32,6 +34,8 @@ public class SalvoController {
 
     @Autowired
     private SalvoRepository salvoRepository;
+
+    public static GameState currentGameState = GameState.PLACING_SHIPS;
 
     @RequestMapping(value = "/scoreboard")
     public List<Object> getPlayers() {
@@ -62,6 +66,7 @@ public class SalvoController {
     @RequestMapping(value = "/games", method = RequestMethod.POST)
     public ResponseEntity<Map<String, Object>> createGame(Authentication auth) {
         Player player = playerRepository.findByUserName(auth.getName());
+
         if (player == null) {
             return new ResponseEntity<>(createResponse("error", "Player is null"), HttpStatus.UNAUTHORIZED);
         } else {
@@ -76,7 +81,6 @@ public class SalvoController {
     @RequestMapping(value = "/game/{id}/players")
     public ResponseEntity<Map<String, Object>> joinGame(@PathVariable long id, Authentication auth) {
         Player currentUser = playerRepository.findByUserName(auth.getName());
-
         if (currentUser == null) {
             return new ResponseEntity<>(createResponse("error", "Player is null"), HttpStatus.UNAUTHORIZED);
         } else {
@@ -136,18 +140,38 @@ public class SalvoController {
             return new ResponseEntity<>(createResponse("error", "Current User and GamePlayer are not equal"), HttpStatus.UNAUTHORIZED);
         }
 
-        int currentTurn = gamePlayer.getSalvos().size() + 1;
-        Salvo salvoObject = new Salvo(gamePlayer, currentTurn, salvo);
+        if(gamePlayer.isFirstGamePlayer()) {
 
-        salvoRepository.save(salvoObject);
+            if (currentGameState == GameState.PLACING_SALVO) {
 
-        return new ResponseEntity<>(createResponse("created", "Salvo added successfully"), HttpStatus.CREATED);
+                Salvo salvoObject = new Salvo(gamePlayer, gamePlayer.getSalvos().size() + 1, salvo);
+
+                salvoRepository.save(salvoObject);
+                currentGameState = GameState.WAIT_FOR_OPPONENT_PLACING_SALVO;
+                return new ResponseEntity<>(createResponse("created", "Salvo added successfully"), HttpStatus.CREATED);
+            } else {
+                return new ResponseEntity<>(createResponse("error", "This is not the right gamestate to place your salvos"), HttpStatus.FORBIDDEN);
+            }
+
+        } else {
+
+            if (currentGameState == GameState.WAIT_FOR_OPPONENT_PLACING_SALVO) {
+
+                Salvo salvoObject = new Salvo(gamePlayer, gamePlayer.getSalvos().size() + 1, salvo);
+
+                salvoRepository.save(salvoObject);
+                currentGameState = GameState.PLACING_SALVO;
+                return new ResponseEntity<>(createResponse("created", "Salvo added successfully"), HttpStatus.CREATED);
+            } else {
+                return new ResponseEntity<>(createResponse("error", "This is not the right gamestate to place your salvos"), HttpStatus.FORBIDDEN);
+            }
+
+        }
     }
 
     @RequestMapping(value = "/games/players/{gpid}/ships", method = RequestMethod.POST)
     public ResponseEntity<Map<String, Object>> placeShips(@PathVariable long gpid, @RequestBody List<Ship> ships, Authentication auth) {
         Player currentUser = playerRepository.findByUserName(auth.getName());
-
 
         if (currentUser == null) {
             return new ResponseEntity<>(createResponse("error", "Player is not logged in"), HttpStatus.UNAUTHORIZED);
@@ -163,28 +187,45 @@ public class SalvoController {
             return new ResponseEntity<>(createResponse("error", "Current User and GamePlayer are not equal"), HttpStatus.UNAUTHORIZED);
         }
 
-        if (gamePlayer.getShips().isEmpty()) {
+        if (!gamePlayer.getShips().isEmpty()) {
             return new ResponseEntity<>(createResponse("error", "User has already placed ships"), HttpStatus.FORBIDDEN);
         }
 
-        if (this.getGameState(gamePlayer, auth).equals(GameState.PLACING_SHIPS)) {
+        if (gamePlayer.isFirstGamePlayer()) {
 
-            ships.forEach(ship -> {
-                gamePlayer.addShip(ship);
-                shipRepository.save(ship);
-            });
+            if (currentGameState == GameState.PLACING_SHIPS) {
 
-            return new ResponseEntity<>(createResponse("created", "Ships placed successfully"), HttpStatus.CREATED);
+                ships.forEach(ship -> {
+                    gamePlayer.addShip(ship);
+                    shipRepository.save(ship);
+                });
+
+                currentGameState = GameState.WAIT_FOR_OPPONENT_PLACE_SHIPS;
+                return new ResponseEntity<>(createResponse("created", "Ships placed successfully"), HttpStatus.CREATED);
+            } else {
+                return new ResponseEntity<>(createResponse("error", "This is not the right gamestate to place your ships"), HttpStatus.FORBIDDEN);
+            }
 
         } else {
-            return new ResponseEntity<>(createResponse("error", "This is not the right gamestate to place your ships"), HttpStatus.FORBIDDEN);
+
+            if (currentGameState == GameState.WAIT_FOR_OPPONENT_PLACE_SHIPS) {
+                ships.forEach(ship -> {
+                    gamePlayer.addShip(ship);
+                    shipRepository.save(ship);
+                });
+
+                currentGameState = GameState.PLACING_SALVO;
+                return new ResponseEntity<>(createResponse("created", "Ships placed successfully"), HttpStatus.CREATED);
+            } else {
+                return new ResponseEntity<>(createResponse("error", "This is not the right gamestate to place your ships"), HttpStatus.FORBIDDEN);
+            }
+
         }
     }
 
     private Map<String, Object> getGameStatistics(GamePlayer gamePlayer, Authentication auth) {
         final Map<String, Object> infos = new HashMap<>();
         final Map<Ship, Integer> remainingShipLocations = new HashMap<>();
-
         final List<Salvo> salvos = gamePlayer.getSalvos().stream()
                 .sorted(Comparator.comparingInt(Salvo::getTurn))
                 .collect(toList());
@@ -200,8 +241,7 @@ public class SalvoController {
             infos.put("player_hitted_ships", this.getHits(gamePlayer, auth));
 
             for (Salvo salvo : salvos) {
-                System.out.println(this.getSunk(enemyShips, salvo, remainingShipLocations));
-                infos.put("sunken_ships", this.getSunk(enemyShips, salvo, remainingShipLocations));
+                infos.put("sunken_ships", this.getSunkenShips(enemyShips, salvo, remainingShipLocations));
             }
         });
 
@@ -209,29 +249,80 @@ public class SalvoController {
     }
 
     private GameState getGameState(GamePlayer gamePlayer, Authentication auth) {
-        GameState response = null;
         GamePlayer enemy = this.getEnemy(gamePlayer, auth);
 
         if (gamePlayer.getShips().isEmpty()) {
-            response = GameState.PLACING_SHIPS;
+            currentGameState = GameState.PLACING_SHIPS;
+            return GameState.PLACING_SHIPS;
         }
 
         if (enemy.getShips().isEmpty()) {
-            response = GameState.WAIT_FOR_OPPONENT_PLACE_SHIPS;
+            currentGameState = GameState.WAIT_FOR_OPPONENT_PLACE_SHIPS;
+            return GameState.WAIT_FOR_OPPONENT_PLACE_SHIPS;
         }
 
         if (gamePlayer.getSalvos().isEmpty()) {
-            response = GameState.PLACING_SALVO;
+            currentGameState = GameState.PLACING_SALVO;
+            return GameState.PLACING_SALVO;
         }
 
         if (enemy.getSalvos().isEmpty()) {
-            response = GameState.WAIT_FOR_OPPONENT_PLACING_SALVO;
+            currentGameState = GameState.WAIT_FOR_OPPONENT_PLACING_SALVO;
+            return GameState.WAIT_FOR_OPPONENT_PLACING_SALVO;
         }
 
-        return response;
+        if (this.allShipsAreSunken(gamePlayer, auth) || this.allShipsAreSunken(enemy, auth)) {
+            currentGameState = GameState.GAME_OVER;
+            return GameState.GAME_OVER;
+        }
+
+        return null;
     }
 
-    private List<String> getSunk(Set<Ship> ships, Salvo salvo, Map<Ship, Integer> remainingShipLocations) {
+    private boolean allShipsAreSunken(GamePlayer gamePlayer, Authentication auth) {
+        Set<Ship> gamePlayerShips = gamePlayer.getShips();
+
+
+        final Map<Ship, Integer> remainingShipLocations = new HashMap<>();
+        final List<Salvo> salvos = gamePlayer.getSalvos().stream()
+                .sorted(Comparator.comparingInt(Salvo::getTurn))
+                .collect(toList());
+
+        AtomicBoolean response = new AtomicBoolean(false);
+
+        this.ifEnemyIsPresent(gamePlayer, auth, enemy -> {
+
+            Set<Ship> enemyShips = enemy.getShips();
+            List<String> shipLocs = new ArrayList<>();
+
+            for (Salvo salvo : salvos) {
+                List<String> sunkenShipLocations = this.getSunkenShips(enemyShips, salvo, remainingShipLocations);
+                for (Ship ship : gamePlayerShips) {
+                    shipLocs.addAll(ship.getLocations());
+                }
+                if(shipLocs.size() == sunkenShipLocations.size()) {
+                    response.set(true);
+                } else {
+                    response.set(false);
+                }
+            }
+        });
+
+        return response.get();
+    }
+
+    private Player currentAuthenticatedUser(Authentication authentication) {
+        if (isGuest(authentication)) {
+            return null;
+        }
+        return playerRepository.findByUserName(authentication.getName());
+    }
+
+    private boolean isGuest(Authentication authentication) {
+        return authentication == null || authentication instanceof AnonymousAuthenticationToken;
+    }
+
+    private List<String> getSunkenShips(Set<Ship> ships, Salvo salvo, Map<Ship, Integer> remainingShipLocations) {
         final List<String> response = new ArrayList<>();
         for (Ship current : ships) {
 
@@ -383,5 +474,9 @@ public class SalvoController {
         if (this.getEnemy(gamePlayer, auth) != null) {
             action.accept(this.getEnemy(gamePlayer, auth));
         }
+    }
+
+    public GameState getCurrentGameState() {
+        return currentGameState;
     }
 }

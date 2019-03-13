@@ -27,6 +27,8 @@ public class GamePlayer {
     @OneToMany(mappedBy = "gamePlayer", fetch = FetchType.EAGER)
     private List<Salvo> salvos;
 
+    private boolean firstGamePlayer = false;
+
     public GamePlayer() {
 
     }
@@ -36,6 +38,13 @@ public class GamePlayer {
         this.game = game;
         this.ships = new HashSet<>();
         this.salvos = new ArrayList<>();
+        if (this.game.getGamePlayers().size() == 0) {
+            firstGamePlayer = true;
+        }
+    }
+
+    public boolean isFirstGamePlayer() {
+        return firstGamePlayer;
     }
 
     //<editor-fold desc="addSalvo">
